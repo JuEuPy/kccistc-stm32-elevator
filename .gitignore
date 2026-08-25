@@ -1,0 +1,29 @@
+# STM32CubeIDE / Eclipse
+Debug/
+Release/
+.metadata/
+.settings/
+*.launch
+
+# STM32CubeMX
+*.ioc.bak
+
+# Build artifacts
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.list
+*.su
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+
+# 개인 메모 / 문서 (비공개)
+personal.md
+docs/
