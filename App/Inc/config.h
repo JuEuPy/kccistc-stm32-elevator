@@ -27,8 +27,17 @@
 #define MOTOR_IN2_GPIO_Port  GPIOB   /* 역회전(하강) 방향 제어 */
 #define MOTOR_IN2_Pin        GPIO_PIN_1
 
-// 구동 인가
-#define MOTOR_ENA_GPIO_Port  GPIOB   
-#define MOTOR_ENA_Pin        GPIO_PIN_2
+/*
+ * 구동 인가 (pwm 으로 속도 제어)
+ * CubeMX에서 TIM4를 PWM 모드로 생성 필요
+ */
+#define MOTOR_PWM_TIM        htim4
+#define MOTOR_PWM_CHANNEL    TIM_CHANNEL_3
+#define MOTOR_PWM_ARR        999U   // Counter Period 
+
+/* 속도(%) 기본값/범위: 나중에 실측 후 조정 */
+#define MOTOR_SPEED_DEFAULT  70U
+#define MOTOR_SPEED_MIN      0U
+#define MOTOR_SPEED_MAX      100U
 
 #endif /* APP_INC_CONFIG_H_ */
