@@ -5,17 +5,17 @@
 
 static ElevatorState_t s_state;
 
-void FSM_Init(void)
+void fsmInit(void)
 {
     /* TODO */
 }
 
-void FSM_Update(void)
+void fsmUpdate(void)
 {
     /* TODO */
 }
 
-ElevatorState_t FSM_GetState(void)
+ElevatorState_t fsmGetState(void)
 {
     return s_state;
 }

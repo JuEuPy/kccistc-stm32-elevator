@@ -1,28 +1,28 @@
 #include "scheduler.h"
 
-void Scheduler_Init(void)
+void schedulerInit(void)
 {
     /* TODO */
 }
 
-void Scheduler_AddRequest(uint8_t floor)
+void schedulerAddRequest(uint8_t floor)
 {
     /* TODO */
 }
 
-bool Scheduler_HasPendingRequests(void)
+bool schedulerHasPendingRequests(void)
 {
     /* TODO */
     return false;
 }
 
-uint8_t Scheduler_GetNextTarget(uint8_t current_floor)
+uint8_t schedulerGetNextTarget(uint8_t current_floor)
 {
     /* TODO */
     return current_floor;
 }
 
-void Scheduler_ClearRequest(uint8_t floor)
+void schedulerClearRequest(uint8_t floor)
 {
     /* TODO */
 }

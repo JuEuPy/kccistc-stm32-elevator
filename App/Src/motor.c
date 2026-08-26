@@ -1,21 +1,21 @@
 #include "motor.h"
 
-void Motor_Init(void)
+void motorInit(void)
 {
     /* TODO */
 }
 
-void Motor_Up(void)
+void motorUp(void)
 {
     /* TODO */
 }
 
-void Motor_Down(void)
+void motorDown(void)
 {
     /* TODO */
 }
 
-void Motor_Stop(void)
+void motorStop(void)
 {
     /* TODO */
 }
