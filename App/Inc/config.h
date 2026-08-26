@@ -55,4 +55,9 @@
 #define MOTOR_ENA_GPIO_Port  GPIOB   
 #define MOTOR_ENA_Pin        GPIO_PIN_2
 
+// 속도(%) 
+#define MOTOR_SPEED_DEFAULT  60U
+#define MOTOR_SPEED_MIN      0U
+#define MOTOR_SPEED_MAX      100U
+
 #endif /* APP_INC_CONFIG_H_ */
