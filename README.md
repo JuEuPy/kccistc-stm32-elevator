@@ -16,13 +16,13 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 | 2층 | PC1 | A4 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 | 3층 | PC2 | CN7 (Pin 35) | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 
-## 층 위치 감지 센서
+## 층 위치 감지 센서(HC-SR04)
 
-| 층 | GPIO 포트/핀 | EXTI 라인 | 비고 |
+| 신호 | GPIO 포트/핀 | EXTI 라인 | 비고 |
 |:---|:---|:---|:---|:---|
-| 1층 | PA0 / A0 | EXTI Line 0 | 외부 인터럽트 |
-| 2층 | PA1 / A1 | EXTI Line 1 | 외부 인터럽트| 
-| 3층 | PA4 / A2  | EXTI Line 4 | 외부 인터럽트 |
+| Trig | PA0 / A0 | GPIO_OUPUT | 10 us 펄스 발신 |
+| Echo | PA1 / A1 | GPIO_INPUT |  펄스 폭 측정 (거리 계산) | 
+
 
 | 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
