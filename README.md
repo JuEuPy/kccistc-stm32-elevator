@@ -15,11 +15,11 @@ aa
 
 ## 층 위치 감지 센서
 
-| 신호 | GPIO 포트/핀 | EXTI 라인 | 비고 |
+| 층 | GPIO 포트/핀 | EXTI 라인 | 비고 |
 |:---|:---|:---|:---|:---|
-| Trig | PA0 / A0 | GPIO_OUPUT | 10 us 펄스 발신 |
-| Echo | PA1 / A1 | GPIO_INPUT |  펄스 폭 측정 (거리 계산) | 
-
+| 1층 | PA0 / A0 | EXTI Line 0 | 외부 인터럽트 |
+| 2층 | PA1 / A1 | EXTI Line 1 | 외부 인터럽트| 
+| 3층 | PA4 / A2  | EXTI Line 4 | 외부 인터럽트 |
 
 ## 모터 드라이버(L298N & SE-DM185)
 
@@ -53,7 +53,6 @@ Counter Period (ARR): 2000 - 1
 | 1층 LED(빨강) | PB6 / D10 | GPIO_OUTPUT | 디버깅용
 | 2층 LED(노랑) | PA7 / D11 | GPIO_OUTPUT | 디버깅용
 | 3층 LED(초록) | PA6 / D12 | GPIO_OUTPUT | 디버깅용
-
 
 
 
