@@ -52,7 +52,6 @@ aa
 | 1층 LED (빨강) | PB6 | D10 | GPIO_Output | 1층 위치/호출 표시 |
 | 2층 LED (노랑) | PA7 | D11 | GPIO_Output | 2층 위치/호출 표시 |
 | 3층 LED (초록) | PA6 | D12 | GPIO_Output | 3층 위치/호출 표시 |
-| 시스템 LED (LD2) | PA5 | D13 | GPIO_Output | 보드 내장 Green LED |
 | Debug UART TX | PA2 | D1 | USART2_TX | 115200 bps 디버깅 출력 |
 | Debug UART RX | PA3 | D0 | USART2_RX | 115200 bps 디버깅 입력 |
 
