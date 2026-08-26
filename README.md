@@ -10,35 +10,53 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 
 ## 층 호출 버튼
 
-| 층 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+| 층 | GPIO 포트/핀 | 모드 | 비고
 |:---|:---|:---|:---|:---|
-| 1층 | PC0 | A5 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 2층 | PC1 | A4 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 3층 | PC2 | CN7 (Pin 35) | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 1층 | PC0 / A5 | GPIO_INPUT(PULL UP) | 버튼 누름 시 Low
+| 2층 | PC1 / A4 | GPIO_INPUT(PULL UP) | 버튼 누름 시 Low
+| 3층 | PC2 / CN7(Pin 35) | GPIO_INPUT(PULL UP) | 버튼 누름 시 Low
 
 ### 각 층 승강장 호출 버튼 
 
-| 호출 구분 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+| 층 | GPIO 포트/핀 | EXTI 라인 | 비고 |
 |:---|:---|:---|:---|:---|
-| 1층 호출 (상향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 2층 호출 (하향) | PA2 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 3층 호출 (하향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-## 모터 드라이버 (L298N & SE-DM185)
+| 1층 | PA0 / A0 | EXTI Line 0 | 외부 인터럽트 |
+| 2층 | PA1 / A1 | EXTI Line 1 | 외부 인터럽트| 
+| 3층 | PA4 / A2  | EXTI Line 4 | 외부 인터럽트 |
 
-| 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+## 모터 드라이버(L298N & SE-DM185)
+
+| 신호 | GPIO 포트/핀 | 모드 | 비고
+
+| IN1 (정회전) | PB0 / A3 | GPIO_OUTPUT | High/Low
+| IN2 (역회전) | PB1 / CN10(Pin 24) | GPIO_OUTPUT | High/Low
+| ENA/PWM | PB8 / D15 | TIM4_CH3 (PWM) | 1kHz
+
+## 서보 모터 (SG90 / MG996R)
+
+| 신호 | GPIO 포트/핀 | 모드 | 비고
 |:---|:---|:---|:---|:---|
-| IN3 (정회전) | PB0 | A3 | GPIO_Output | High/Low 방향 제어 |
-| IN4 (역회전) | PB1 | CN10 (Pin 24) | GPIO_Output | High/Low 방향 제어 |
-| ENA (속도 PWM) | PB8 | D15 | TIM4_CH3 (PWM) | 1kHz 속도 제어 |
-| A상 | PC6 | CN10(Pin 4) | TIM3_CH1 (Encoder Mode) | 방향 판별 |
-| B상 | PC7 | D9 | TIM3_CH2 (Encoder Mode) | 방향 판별 |
+| PWM | PB3 / D3 | TIM2_CH2 (PWM) | 50hz? 
+
+## 타이머 파라미터(CubeMX 기준)
+
+TIM4 (DC 모터 속도 제어, 1kHz)
+Prescaler (PSC): 100 - 1
+Counter Period (ARR): 1000 - 1
+
+TIM2 (서보 모터 도어 제어, 50Hz)
+Prescaler (PSC): 1000 - 1
+Counter Period (ARR): 2000 - 1
 
 
 ## 서보 모터 (SG90 / MG996R 도어 제어)
 
-| 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+| 용도 | GPIO 포트/핀 | 비고 |
 |:---|:---|:---|:---|:---|
-| PWM | PA11 | D3 | TIM1_CH4 (PWM) | 50Hz (0°: 닫힘 / 90°: 열림) |
+| 1층 LED(빨강) | PB6 / D10 | GPIO_OUTPUT | 디버깅용
+| 2층 LED(노랑) | PA7 / D11 | GPIO_OUTPUT | 디버깅용
+| 3층 LED(초록) | PA6 / D12 | GPIO_OUTPUT | 디버깅용
+
 
 ## 상태 표시 LED & 시스템
 
