@@ -27,3 +27,6 @@ Thumbs.db
 # 개인 메모 / 문서 (비공개)
 personal.md
 docs/
+CONTRIBUTING.md
+Core/README.md
+Drivers/README.md

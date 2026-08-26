@@ -5,12 +5,12 @@
 #include "floor_sensor.h"
 #include "fsm.h"
 
-void App_Init(void)
+void appInit(void)
 {
     /* TODO */
 }
 
-void App_Run(void)
+void appRun(void)
 {
     /* TODO */
 }

@@ -1,17 +1,17 @@
 #include "floor_sensor.h"
 
-void FloorSensor_Init(void)
+void floorSensorInit(void)
 {
     /* TODO */
 }
 
-uint8_t FloorSensor_GetCurrentFloor(void)
+uint8_t floorSensorGetCurrentFloor(void)
 {
     /* TODO */
     return 0;
 }
 
-void FloorSensor_IRQHandler(uint16_t gpio_pin)
+void floorSensorIrqHandler(uint16_t gpio_pin)
 {
     /* TODO */
 }

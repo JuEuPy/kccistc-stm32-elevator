@@ -2,12 +2,12 @@
 #include "config.h"
 #include "scheduler.h"
 
-void Button_Init(void)
+void buttonInit(void)
 {
     /* TODO */
 }
 
-void Button_Scan(void)
+void buttonScan(void)
 {
     /* TODO */
 }
