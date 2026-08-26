@@ -1,6 +1,6 @@
 # kccistc-stm32-elevator
 Make! A! Elevator!
-aa
+
 # 핀 배치 (Pinout)
 
 하드웨어가 확정되는 대로 이 표를 갱신하고, `App/Inc/config.h`의 정의도 함께 수정합니다.
