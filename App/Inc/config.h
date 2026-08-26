@@ -9,7 +9,7 @@
 /* 버튼 디바운싱 시간 (ms) */
 #define BUTTON_DEBOUNCE_MS  20U
 
-/* 버튼/센서 스캔 주기 (ms), App_Run()에서 SysTick 기반으로 사용 */
+/* 버튼/센서 스캔 주기 (ms), appRun()에서 SysTick 기반으로 사용 */
 #define APP_TICK_MS         1U
 
 #endif /* APP_INC_CONFIG_H_ */

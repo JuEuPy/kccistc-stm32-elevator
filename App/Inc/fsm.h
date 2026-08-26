@@ -8,8 +8,8 @@ typedef enum {
     STATE_ARRIVED
 } ElevatorState_t;
 
-void FSM_Init(void);
-void FSM_Update(void);
-ElevatorState_t FSM_GetState(void);
+void fsmInit(void);
+void fsmUpdate(void);
+ElevatorState_t fsmGetState(void);
 
 #endif /* APP_INC_FSM_H_ */

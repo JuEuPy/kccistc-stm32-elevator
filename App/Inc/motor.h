@@ -1,9 +1,9 @@
 #ifndef APP_INC_MOTOR_H_
 #define APP_INC_MOTOR_H_
 
-void Motor_Init(void);
-void Motor_Up(void);
-void Motor_Down(void);
-void Motor_Stop(void);
+void motorInit(void);
+void motorUp(void);
+void motorDown(void);
+void motorStop(void);
 
 #endif /* APP_INC_MOTOR_H_ */
