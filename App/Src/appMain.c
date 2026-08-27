@@ -6,6 +6,7 @@
 #include "floorEncoder.h"
 #include "fsm.h"
 #include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
 
@@ -30,7 +31,7 @@ void appTestMotor(void)
 {
     motorInit();
 
-    // motorUp();
+    // motoDown();
     // HAL_Delay(1000);
 
     // motorStop();
@@ -82,15 +83,22 @@ void appTestFloorEncoder(void)
 void appTestFloorEncoderCalibration(void)
 {
     floorEncoderInit();
+
     motorInit();
 
     motorUp();
 
-    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) != GPIO_PIN_RESET) {
+     
+     while (1) {
         printf("pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-    }
 
-    motorStop();
+        if(HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET){
+            break;
+         
+     }
+     HAL_Delay(30);
+    }
+  motorStop();
     printf("STOP! final pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
 
     while (1) {
