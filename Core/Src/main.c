@@ -97,6 +97,7 @@ int main(void)
   // appInit();
   // appTestMotor();
   // appTestFloorSensor();
+  appTestFloorEncoder();
 
 
   /* USER CODE END 2 */

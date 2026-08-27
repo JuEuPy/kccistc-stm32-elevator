@@ -13,4 +13,7 @@ void appTestMotor(void);
 /* 초음파 센서 배선 확인용 수동 테스트: 거리(cm)를 계속 측정해 printf로 출력 (무한 루프) */
 void appTestFloorSensor(void);
 
+// 펄스 측정 테스트
+void appTestFloorEncoder(void);
+
 #endif /* APP_INC_APPMAIN_H_ */
