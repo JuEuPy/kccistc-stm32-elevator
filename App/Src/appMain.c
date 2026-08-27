@@ -17,6 +17,7 @@ int __io_putchar(int ch){
 }
 
 void appInit(void){
+    schedulerInit();
     elevatorControllerInit();
 }
 
@@ -37,6 +38,9 @@ void appRun(void){
     if (target_floor == 0) {
         return;
     }
+
+    /* 여러 층 요청을 큐에 쌓아 순서대로 처리하는 기능은 아직 미구현. 나중을 위해 요청만 기록해둠. */
+    schedulerAddRequest(target_floor);
 
     elevatorControllerMoveToFloor(target_floor);
     printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
