@@ -1,10 +1,11 @@
 #include "appMain.h"
+#include "config.h"
 #include "button.h"
 #include "scheduler.h"
 #include "motor.h"
 #include "floorSensor.h"
 #include "floorEncoder.h"
-#include "fsm.h"
+#include "elevatorController.h"
 #include "main.h"
 #include "usart.h"
 #include <stdio.h>
@@ -24,7 +25,7 @@ void appRun(void){
 
 /*
  * 모터 배선/방향이 맞는지 확인하기 위한 수동 테스트.
- * FSM/스케줄러 없이 motor.c의 API만 직접 호출해서 상승 -> 정지 -> 하강 -> 정지를 실행
+ * elevatorController/스케줄러 없이 motor.c의 API만 직접 호출해서 상승 -> 정지 -> 하강 -> 정지를 실행
  */
 void appTestMotor(void)
 {
@@ -73,27 +74,81 @@ void appTestFloorEncoder(void)
     }
 }
 
+
+// void appTestFloorEncoderCalibration(void)
+// {
+//     floorEncoderInit();
+//     motorInit();
+
+//     motorUp();
+
+//     while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) != GPIO_PIN_RESET) {
+//         printf("pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
+//     }
+
+//     motorStop();
+//     printf("STOP! final pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
+
+//     while (1) {
+//         /* 최종 값을 계속 볼 수 있도록 정지 상태 유지 */
+//     }
+// }
+
 /*
- * FLOOR_15CM_PULSE 실측 보정용 테스트.
- * 모터를 구동하면서 동시에 pulse 값을 실시간으로 계속 출력하고, BTN_1을 누르는 순간 모터를 멈추고 그 시점의 최종 pulse 값을 출력한다.
- * 사용법: 1층에 케이지를 두고 이 함수를 실행 -> 자로 15cm 지점을 보다가 그 순간 BTN_1을 눌러서 정지 -> 화면에 찍힌 최종 pulse 값을
- * config.h의 FLOOR_15CM_PULSE에 그대로 대입.
+ * 버튼 -> 목표 층 이동 직결 테스트 (elevatorController 안 거침).
+ * BTN_1=1층, BTN_2=2층, BTN_3=3층. 현재 층을 기억해뒀다가,
+ * 목표 층까지 필요한 만큼 한 스텝(FLOOR_15CM_PULSE)씩 반복 이동한다.
+ * (motorUp()은 펄스가 감소, motorDown()은 증가하는 걸 실측으로 확인했으므로 부호를 그에 맞춤)
  */
-void appTestFloorEncoderCalibration(void)
-{
+void appTestButtonMove(void){
+    uint8_t current_floor = FLOOR_MIN; /* 기본값 1층에서 시작 */
+
     floorEncoderInit();
     motorInit();
 
-    motorUp();
-
-    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) != GPIO_PIN_RESET) {
-        printf("pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-    }
-
-    motorStop();
-    printf("STOP! final pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-
     while (1) {
-        /* 최종 값을 계속 볼 수 있도록 정지 상태 유지 */
+        uint8_t target_floor = 0;
+
+        if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
+            target_floor = 1;
+        } else if (HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET) {
+            target_floor = 2;
+        } else if (HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
+            target_floor = 3;
+        }
+
+        if (target_floor == 0) {
+            continue;
+        }
+
+        while (current_floor < target_floor) {
+            int32_t start_pulse = floorEncoderGetPulseCount();
+
+            motorUp();
+            while ((start_pulse - floorEncoderGetPulseCount()) < (int32_t)FLOOR_15CM_PULSE) {
+            }
+            motorStop();
+
+            current_floor++;
+        }
+
+        while (current_floor > target_floor) {
+            int32_t start_pulse = floorEncoderGetPulseCount();
+
+            motorDown();
+            while ((floorEncoderGetPulseCount() - start_pulse) < (int32_t)FLOOR_15CM_PULSE) {
+            }
+            motorStop();
+
+            current_floor--;
+        }
+
+        printf("arrived at floor %u\r\n", current_floor);
+
+        /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
+        while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET ||
+               HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET ||
+               HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
+        }
     }
 }
