@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "appMain.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,7 +91,16 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM4_Init();
   MX_USART2_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+
+
+  // appInit();
+  // appTestMotor();
+// appTestFloorSensor();
+  // appTestFloorEncoder();
+  appTestFloorEncoderCalibration();
+
 
   /* USER CODE END 2 */
 
@@ -102,6 +111,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    appRun();
   }
   /* USER CODE END 3 */
 }
