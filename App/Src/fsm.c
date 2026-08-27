@@ -1,7 +1,7 @@
 #include "fsm.h"
 #include "scheduler.h"
 #include "motor.h"
-#include "floor_sensor.h"
+#include "floorSensor.h"
 
 static ElevatorState_t s_state;
 
