@@ -15,17 +15,16 @@
 #define APP_TICK_MS         1U
 
 /*
- * 모터 드라이버
- * TODO: 하드웨어 핀 배치 확정 전까지의 임시값. 확정되면 이 값들 갱신할 것
+ * 모터 드라이버 (CubeMX 확정: MOT_IN3/IN4, main.h 참고)
  */
 
 // 정회전 (상승)
-#define MOTOR_IN1_GPIO_Port  GPIOB   
-#define MOTOR_IN1_Pin        GPIO_PIN_0
+#define MOTOR_IN1_GPIO_Port  MOT_IN3_GPIO_Port
+#define MOTOR_IN1_Pin        MOT_IN3_Pin
 
 // 역회전 (하강)
-#define MOTOR_IN2_GPIO_Port  GPIOB   /* 역회전(하강) 방향 제어 */
-#define MOTOR_IN2_Pin        GPIO_PIN_1
+#define MOTOR_IN2_GPIO_Port  MOT_IN4_GPIO_Port
+#define MOTOR_IN2_Pin        MOT_IN4_Pin
 
 /*
  * 구동 인가 (pwm 으로 속도 제어)
@@ -49,12 +48,12 @@
 #define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
 
 /*
- * TRIG: 출력, ECHO: 입력
+ * TRIG: 출력, ECHO: 입력 (CubeMX 확정: SONIC_TRIG/ECHO, main.h 참고)
  */
-#define SENSOR_TRIG_GPIO_Port GPIOA
-#define SENSOR_TRIG_Pin       GPIO_PIN_8
-#define SENSOR_ECHO_GPIO_Port GPIOA
-#define SENSOR_ECHO_Pin       GPIO_PIN_9
+#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
+#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
+#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
+#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
 
 /* 응답 타임아웃 */
 #define SENSOR_ECHO_START_TIMEOUT_US 5000U  
