@@ -36,8 +36,8 @@
 #define MOTOR_PWM_ARR        999U   // Counter Period 
 
 /* 속도(%) 기본값/범위: 나중에 실측 후 조정 */
-#define MOTOR_SPEED_DEFAULT  70U
-#define MOTOR_SPEED_MIN      0U
+#define MOTOR_SPEED_DEFAULT  90U
+#define MOTOR_SPEED_MIN      90U
 #define MOTOR_SPEED_MAX      100U
 
 /*
