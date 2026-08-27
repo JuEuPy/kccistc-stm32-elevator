@@ -24,7 +24,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "appMain.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -93,6 +93,12 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
 
+
+  // appInit();
+  // appTestMotor();
+  // appTestFloorSensor();
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -102,6 +108,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    appRun();
   }
   /* USER CODE END 3 */
 }
