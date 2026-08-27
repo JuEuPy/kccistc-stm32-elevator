@@ -1,8 +1,5 @@
 # kccistc-stm32-elevator
-
-STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
-
----
+Make! A! Elevator!
 
 # 핀 배치 (Pinout)
 
