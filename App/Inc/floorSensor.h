@@ -1,5 +1,5 @@
-#ifndef APP_INC_FLOOR_SENSOR_H_
-#define APP_INC_FLOOR_SENSOR_H_
+#ifndef APP_INC_FLOORSENSOR_H_
+#define APP_INC_FLOORSENSOR_H_
 
 #include <stdint.h>
 
@@ -9,4 +9,4 @@ uint8_t floorSensorGetCurrentFloor(void);
 /* HAL_GPIO_EXTI_Callback()에서 호출 */
 void floorSensorIrqHandler(uint16_t gpio_pin);
 
-#endif /* APP_INC_FLOOR_SENSOR_H_ */
+#endif /* APP_INC_FLOORSENSOR_H_ */
