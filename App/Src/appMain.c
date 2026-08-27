@@ -3,6 +3,7 @@
 #include "scheduler.h"
 #include "motor.h"
 #include "floorSensor.h"
+#include "floorEncoder.h"
 #include "fsm.h"
 #include "main.h"
 #include "usart.h"
@@ -55,6 +56,19 @@ void appTestFloorSensor(void)
             printf("거리: timeout/out of range\r\n");
         }
 
+        HAL_Delay(300);
+    }
+}
+
+/*
+ * 모터 축 엔코더 배선 확인용 수동 테스트.
+ */
+void appTestFloorEncoder(void)
+{
+    floorEncoderInit();
+
+    while (1) {
+        printf("=====pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
         HAL_Delay(300);
     }
 }

@@ -64,4 +64,19 @@
 #define SENSOR_DISTANCE_MIN_CM       2U
 #define SENSOR_DISTANCE_MAX_CM       400U
 
+/*
+ * 층 감지 방식 전환
+ * fsm.c가 이 값을 보고 floorSensor(초음파) / encoder(모터 축 엔코더) 중 하나만 쓴다.
+ */
+#define FLOOR_SENSE_ULTRASONIC  0   //수정안함
+#define FLOOR_SENSE_ENCODER     1   //수정안함
+#define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
+
+/*
+ * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
+ * CubeMX에서 TIMx를 Encoder Mode(Combined Channels)로 설정 필요.
+ */
+#define ENCODER_TIM          htim3
+#define FLOOR_15CM_PULSE     1000U // 임시값 
+
 #endif /* APP_INC_CONFIG_H_ */
