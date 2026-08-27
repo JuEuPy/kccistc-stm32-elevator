@@ -13,9 +13,19 @@ void floorEncoderInit(void)
 int32_t floorEncoderGetPulseCount(void)
 {
     /*
-     * TIM3 카운터는 역방향 회전 시 0 밑으로 못 내려가고 65535 쪽에서 언더플로우(wraparound)한다. 
+     * TIM3 카운터는 역방향 회전 시 0 밑으로 못 내려가고 65535 쪽에서 언더플로우(wraparound)한다.
      */
     int16_t raw = (int16_t)__HAL_TIM_GET_COUNTER(&ENCODER_TIM);
+
+    /*
+     * 절대값이 ENCODER_PULSE_RESET_THRESHOLD를 넘으면 0으로 재설정
+     */
+    if ((raw > (int16_t)ENCODER_PULSE_RESET_THRESHOLD) ||
+        (raw < -(int16_t)ENCODER_PULSE_RESET_THRESHOLD)) {
+        __HAL_TIM_SET_COUNTER(&ENCODER_TIM, 0);
+        return 0;
+    }
+
     return (int32_t)raw;
 }
 

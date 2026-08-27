@@ -17,4 +17,7 @@ void appTestFloorSensor(void);
 void appTestFloorEncoder(void);
 void appTestFloorEncoderCalibration(void);
 
+/* 버튼 -> 모터 이동 직결 테스트: BTN_1=위로 한 스텝, BTN_2=아래로 한 스텝 */
+void appTestButtonMove(void);
+
 #endif /* APP_INC_APPMAIN_H_ */

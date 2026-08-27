@@ -97,9 +97,10 @@ int main(void)
 
   // appInit();
   // appTestMotor();
-// appTestFloorSensor();
+  // appTestFloorSensor();
   // appTestFloorEncoder();
-  appTestFloorEncoderCalibration();
+  // appTestFloorEncoderCalibration();
+  appTestButtonMove();
 
 
   /* USER CODE END 2 */

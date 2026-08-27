@@ -42,7 +42,6 @@
 /*
  * 층 위치 감지. 
  * 구조물 총 높이 45cm / 3개 층 = 층당 15cm
- * 실측 거리(cm)가 몇 번째 15cm 구간에 속하는지로 현재 층을 판단
  */
 #define STRUCTURE_HEIGHT_CM  45U
 #define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
@@ -65,17 +64,23 @@
 
 /*
  * 층 감지 방식 전환
- * fsm.c가 이 값을 보고 floorSensor(초음파) / encoder(모터 축 엔코더) 중 하나만 쓴다.
+ * elevatorController.c가 이 값을 보고 floorSensor(초음파) / encoder(모터 축 엔코더) 중 하나만 쓴다.
  */
 #define FLOOR_SENSE_ULTRASONIC  0   //수정안함
 #define FLOOR_SENSE_ENCODER     1   //수정안함
 #define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
 
 /*
- * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
- * CubeMX에서 TIMx를 Encoder Mode(Combined Channels)로 설정 필요.
+ * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지. 
  */
 #define ENCODER_TIM          htim3
-#define FLOOR_15CM_PULSE     1000U // 임시값 
+#define FLOOR_15CM_PULSE     10000U // 임시값
+
+/*
+ * 엔코더 카운터가 이 값을 넘으면(절대값 기준) 0으로 재설정한다.
+ * TIM3는 16비트라 32767을 넘으면 음수로 언더플로우(wraparound)하므로 그 전에 리셋.
+ * NUM_FLOORS=3 기준 최대 이동거리(2 * FLOOR_15CM_PULSE)보다 넉넉히 커야 함.
+ */
+#define ENCODER_PULSE_RESET_THRESHOLD  25000
 
 #endif /* APP_INC_CONFIG_H_ */
