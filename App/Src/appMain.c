@@ -5,14 +5,19 @@
 #include "floorSensor.h"
 #include "fsm.h"
 #include "main.h"
+#include "usart.h"
+#include <stdio.h>
 
-void appInit(void)
-{
+int __io_putchar(int ch){
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
+
+void appInit(void){
     /* TODO */
 }
 
-void appRun(void)
-{
+void appRun(void){
     /* TODO */
 }
 
@@ -32,6 +37,24 @@ void appTestMotor(void)
 
     motorDown();
     HAL_Delay(1000);
-    
+
     motorStop();
+}
+
+/*
+ * 초음파 센서 배선 확인용 수동 테스트.
+ */
+void appTestFloorSensor(void)
+{
+    floorSensorInit();
+
+    while (1) {
+        if (floorSensorTrigger()) {
+            printf("거리: %u cm\r\n", floorSensorGetDistanceCm());
+        } else {
+            printf("거리: timeout/out of range\r\n");
+        }
+
+        HAL_Delay(300);
+    }
 }
