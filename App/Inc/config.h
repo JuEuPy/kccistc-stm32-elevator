@@ -76,11 +76,14 @@
 #define ENCODER_TIM          htim3
 #define FLOOR_15CM_PULSE     10000U // 임시값
 
+/* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
+#define MOTOR_MOVE_TIMEOUT_MS 5000U
+
 /*
  * 엔코더 카운터가 이 값을 넘으면(절대값 기준) 0으로 재설정한다.
  * TIM3는 16비트라 32767을 넘으면 음수로 언더플로우(wraparound)하므로 그 전에 리셋.
  * NUM_FLOORS=3 기준 최대 이동거리(2 * FLOOR_15CM_PULSE)보다 넉넉히 커야 함.
  */
-#define ENCODER_PULSE_RESET_THRESHOLD  25000
+#define ENCODER_PULSE_RESET_THRESHOLD  30000
 
 #endif /* APP_INC_CONFIG_H_ */
