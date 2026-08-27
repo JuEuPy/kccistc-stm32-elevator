@@ -30,14 +30,14 @@ void appTestMotor(void)
 {
     motorInit();
 
-    motorUp();
-    HAL_Delay(1000);
+    // motorUp();
+    // HAL_Delay(1000);
 
-    motorStop();
-    HAL_Delay(500);
+    // motorStop();
+    // HAL_Delay(500);
 
-    motorDown();
-    HAL_Delay(1000);
+     motorDown();
+     HAL_Delay(1000);
 
     motorStop();
 }
