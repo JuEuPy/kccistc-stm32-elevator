@@ -72,3 +72,28 @@ void appTestFloorEncoder(void)
         HAL_Delay(300);
     }
 }
+
+/*
+ * FLOOR_15CM_PULSE 실측 보정용 테스트.
+ * 모터를 구동하면서 동시에 pulse 값을 실시간으로 계속 출력하고, BTN_1을 누르는 순간 모터를 멈추고 그 시점의 최종 pulse 값을 출력한다.
+ * 사용법: 1층에 케이지를 두고 이 함수를 실행 -> 자로 15cm 지점을 보다가 그 순간 BTN_1을 눌러서 정지 -> 화면에 찍힌 최종 pulse 값을
+ * config.h의 FLOOR_15CM_PULSE에 그대로 대입.
+ */
+void appTestFloorEncoderCalibration(void)
+{
+    floorEncoderInit();
+    motorInit();
+
+    motorUp();
+
+    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) != GPIO_PIN_RESET) {
+        printf("pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
+    }
+
+    motorStop();
+    printf("STOP! final pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
+
+    while (1) {
+        /* 최종 값을 계속 볼 수 있도록 정지 상태 유지 */
+    }
+}
