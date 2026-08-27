@@ -17,14 +17,18 @@ int __io_putchar(int ch){
 }
 
 void appInit(void){
+    buttonInit();
     schedulerInit();
     elevatorControllerInit();
 }
 
 /*
- * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼을 읽어 목표 층으로 이동. 
+ * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼을 읽어 목표 층으로 이동.
+ * buttonScan()은 디바운싱된 눌림을 schedulerAddRequest()로 기록해둔다(나중의 큐 처리를 위함).
  */
 void appRun(void){
+    buttonScan();
+
     uint8_t target_floor = 0;
 
     if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
@@ -38,9 +42,6 @@ void appRun(void){
     if (target_floor == 0) {
         return;
     }
-
-    /* 여러 층 요청을 큐에 쌓아 순서대로 처리하는 기능은 아직 미구현. 나중을 위해 요청만 기록해둠. */
-    schedulerAddRequest(target_floor);
 
     elevatorControllerMoveToFloor(target_floor);
     printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
