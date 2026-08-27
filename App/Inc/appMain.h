@@ -15,5 +15,6 @@ void appTestFloorSensor(void);
 
 // 펄스 측정 테스트
 void appTestFloorEncoder(void);
+void appTestFloorEncoderCalibration(void);
 
 #endif /* APP_INC_APPMAIN_H_ */
