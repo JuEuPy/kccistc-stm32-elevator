@@ -40,4 +40,28 @@
 #define MOTOR_SPEED_MIN      0U
 #define MOTOR_SPEED_MAX      100U
 
+/*
+ * 층 위치 감지. 
+ * 구조물 총 높이 45cm / 3개 층 = 층당 15cm
+ * 실측 거리(cm)가 몇 번째 15cm 구간에 속하는지로 현재 층을 판단
+ */
+#define STRUCTURE_HEIGHT_CM  45U
+#define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
+
+/*
+ * TRIG: 출력, ECHO: 입력
+ */
+#define SENSOR_TRIG_GPIO_Port GPIOA
+#define SENSOR_TRIG_Pin       GPIO_PIN_8
+#define SENSOR_ECHO_GPIO_Port GPIOA
+#define SENSOR_ECHO_Pin       GPIO_PIN_9
+
+/* 응답 타임아웃 */
+#define SENSOR_ECHO_START_TIMEOUT_US 5000U  
+#define SENSOR_ECHO_END_TIMEOUT_US   30000U 
+
+/* 벗어나면 측정 실패로 처리 */
+#define SENSOR_DISTANCE_MIN_CM       2U
+#define SENSOR_DISTANCE_MAX_CM       400U
+
 #endif /* APP_INC_CONFIG_H_ */
