@@ -7,6 +7,7 @@
 #include "floorEncoder.h"
 #include "elevatorController.h"
 #include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
 
@@ -31,7 +32,7 @@ void appTestMotor(void)
 {
     motorInit();
 
-    // motorUp();
+    // motoDown();
     // HAL_Delay(1000);
 
     // motorStop();
@@ -104,6 +105,7 @@ void appTestButtonMove(void){
     uint8_t current_floor = FLOOR_MIN; /* 기본값 1층에서 시작 */
 
     floorEncoderInit();
+
     motorInit();
 
     while (1) {
