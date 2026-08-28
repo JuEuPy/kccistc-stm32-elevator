@@ -1,6 +1,7 @@
 #include "motor.h"
 #include "config.h"
 #include "tim.h"
+#include <stdio.h>
 
 static uint8_t s_speed_percent = MOTOR_SPEED_DEFAULT;
 static MotorState_t s_motor_state = MOTOR_STATE_STOPPED;
@@ -19,16 +20,20 @@ void motorUp(void){
     /* 방향 전환은 항상 IN1/IN2를 끈 상태에서 하고 마지막에 켠다 */
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
+    motorSetSpeed(s_speed_percent);
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_SET);
     s_motor_state = MOTOR_STATE_UP;
+    printf("motorUp: IN1(IN3)=1 IN2(IN4)=0 speed=%u%%\r\n", s_speed_percent);
 }
 
 // 모터 하강
 void motorDown(void){
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
+    motorSetSpeed(s_speed_percent);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_SET);
     s_motor_state = MOTOR_STATE_DOWN;
+    printf("motorDown: IN1(IN3)=0 IN2(IN4)=1 speed=%u%%\r\n", s_speed_percent);
 }
 
 // 모터 정지
@@ -36,6 +41,7 @@ void motorStop(void){
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
     s_motor_state = MOTOR_STATE_STOPPED;
+    printf("motorStop: IN1(IN3)=0 IN2(IN4)=0 ENA=100%%\r\n");
 }
 
 // 현재 모터 상태 조회
