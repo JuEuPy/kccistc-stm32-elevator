@@ -86,4 +86,30 @@
  */
 #define ENCODER_PULSE_RESET_THRESHOLD  30000
 
+/*
+ * 외문(슬라이딩) 서보모터 1개 
+ * 임시값. 실측 후 조정 필요.
+ */
+#define DOOR_PWM_TIM         htim2
+#define DOOR_PWM_CHANNEL     TIM_CHANNEL_2
+#define DOOR_PWM_ARR         1999U   // Counter Period
+
+/* 닫힘/열림 위치에 대응하는 서보 펄스폭(CCR). 임시값(1.0ms/1.5ms 부근) */
+#define DOOR_CLOSED_CCR      100U
+#define DOOR_OPEN_CCR        150U
+
+/* 문이 열리고/닫히는 데 걸리는 대략적 시간(ms). 실측 후 조정 */
+#define DOOR_MOVE_TIME_MS    500U
+
+/*
+ * 층 위치 표시 LED 
+ * 1층=빨강(PB6), 2층=노랑(PA7), 3층=초록(PA6)
+ */
+#define FLOOR_LED_1_GPIO_Port LED_1_GPIO_Port
+#define FLOOR_LED_1_Pin       LED_1_Pin
+#define FLOOR_LED_2_GPIO_Port LED_2_GPIO_Port
+#define FLOOR_LED_2_Pin       LED_2_Pin
+#define FLOOR_LED_3_GPIO_Port LED_3_GPIO_Port
+#define FLOOR_LED_3_Pin       LED_3_Pin
+
 #endif /* APP_INC_CONFIG_H_ */

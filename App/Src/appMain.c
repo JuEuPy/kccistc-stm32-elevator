@@ -85,4 +85,4 @@ void appTestFloorEncoder(void)
         HAL_Delay(300);
     }
 }
- 
+
