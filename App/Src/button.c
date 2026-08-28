@@ -60,9 +60,7 @@ void buttonScan(void){
 
         if ((HAL_GetTick() - btn->press_start_tick) >= BUTTON_DEBOUNCE_MS) {
             btn->confirmed = true;
-            bool queued = schedulerAddRequest(btn->floor);
-            printf("버튼%u 등록됬다구~~~, schedulerAddRequest=%d\r\n", btn->floor, (int)queued);
-            if (queued) {
+            if (schedulerAddRequest(btn->floor)) {
                 elevatorControllerLightFloorLed(btn->floor); /* 큐에 등록된 순간 바로 점등 */
             }
         }
