@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-void buzzerInit(void);
+// void buzzerInit(void);
 
 /* 톤을 duration_ms 동안 재생하고 정지 */
 void buzzerPlayTone(uint16_t frequency_hz, uint16_t duration_ms);
