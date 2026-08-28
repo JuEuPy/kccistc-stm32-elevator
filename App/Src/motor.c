@@ -19,6 +19,7 @@ void motorUp(void){
     /* 방향 전환은 항상 IN1/IN2를 끈 상태에서 하고 마지막에 켠다 */
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
+    motorSetSpeed(s_speed_percent); 
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_SET);
     s_motor_state = MOTOR_STATE_UP;
 }
@@ -27,14 +28,16 @@ void motorUp(void){
 void motorDown(void){
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
+    motorSetSpeed(s_speed_percent); 
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_SET);
     s_motor_state = MOTOR_STATE_DOWN;
 }
 
-// 모터 정지
+// 모터 정지 (브레이크: ENA=100% 고정 + IN1/IN2=0 → 진리표상 "브레이크" 상태)
 void motorStop(void){
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
+    __HAL_TIM_SET_COMPARE(&MOTOR_PWM_TIM, MOTOR_PWM_CHANNEL, MOTOR_PWM_ARR + 1U);
     s_motor_state = MOTOR_STATE_STOPPED;
 }
 
