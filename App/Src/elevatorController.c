@@ -7,7 +7,7 @@
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
 
-static void elevatorControllerUpdateFloorLed(void);
+// static void elevatorControllerUpdateFloorLed(void);
 static ElevatorState_t s_state;
 static uint8_t s_current_floor = FLOOR_MIN; /* 현재 층 위치, 기본값 1층에서 시작 */
 
@@ -25,7 +25,7 @@ static void elevatorControllerNotifyFloor(void)
 void elevatorControllerInit(void){
     floorEncoderInit();
     motorInit();
-    buzzerInit();
+    // buzzerInit();
     elevatorControllerNotifyFloor(); // 시작 층(1층) LED/부저 알림 
 }
 
