@@ -3,6 +3,7 @@
 #include "motor.h"
 #include "config.h"
 #include "floorEncoder.h"
+#include "buzzer.h"
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
 
@@ -11,20 +12,21 @@ static ElevatorState_t s_state;
 static uint8_t s_current_floor = FLOOR_MIN; /* 현재 층 위치, 기본값 1층에서 시작 */
 
 
-void elevatorControllerInit(void){
-    floorEncoderInit();
-    motorInit();
-    elevatorControllerUpdateFloorLed(); /* 시작 층(1층) LED 표시 */
-}
-
-
-
-/* 현재 층에 해당하는 LED 하나만 켜고 나머지는 끈다 */
-static void elevatorControllerUpdateFloorLed(void)
+/* 현재 층에 해당하는 LED만 켜고, 층 알림음(도/미/솔)을 재생한다 */
+static void elevatorControllerNotifyFloor(void)
 {
     HAL_GPIO_WritePin(FLOOR_LED_1_GPIO_Port, FLOOR_LED_1_Pin, (s_current_floor == 1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(FLOOR_LED_2_GPIO_Port, FLOOR_LED_2_Pin, (s_current_floor == 2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(FLOOR_LED_3_GPIO_Port, FLOOR_LED_3_Pin, (s_current_floor == 3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
+
+    buzzerPlayFloorTone(s_current_floor);
+}
+
+void elevatorControllerInit(void){
+    floorEncoderInit();
+    motorInit();
+    buzzerInit();
+    elevatorControllerNotifyFloor(); // 시작 층(1층) LED/부저 알림 
 }
 
 
@@ -62,7 +64,7 @@ bool elevatorControllerMoveToFloor(uint8_t target_floor){
         motorStop();
 
         s_current_floor++;
-        elevatorControllerUpdateFloorLed();
+        elevatorControllerNotifyFloor();
     }
 
     while (s_current_floor > target_floor) {
@@ -81,7 +83,7 @@ bool elevatorControllerMoveToFloor(uint8_t target_floor){
         motorStop();
 
         s_current_floor--;
-        elevatorControllerUpdateFloorLed();
+        elevatorControllerNotifyFloor();
     }
 
     s_state = STATE_ARRIVED;
