@@ -47,16 +47,16 @@ bool elevatorControllerMoveToFloor(uint8_t target_floor){
 
     while (s_current_floor < target_floor) {
         int32_t start_pulse = floorEncoderGetPulseCount();
-        uint32_t start_tick = HAL_GetTick();
+        // uint32_t start_tick = HAL_GetTick();
 
         s_state = STATE_MOVING_UP;
         motorUp();
         while ((start_pulse - floorEncoderGetPulseCount()) < (int32_t)FLOOR_15CM_PULSE) {
-            if ((HAL_GetTick() - start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
-                motorStop();
-                s_state = STATE_ERROR;
-                return false;
-            }
+            // if ((HAL_GetTick() - start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
+            //     motorStop();
+            //     s_state = STATE_ERROR;
+            //     return false;
+            // }
         }
         motorStop();
 
