@@ -43,8 +43,11 @@ void appRun(void){
         return;
     }
 
-    elevatorControllerMoveToFloor(target_floor);
-    printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
+    if (elevatorControllerMoveToFloor(target_floor)) {
+        printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
+    } else {
+        printf("MOVE TIMEOUT! stuck near floor %u (target %u)\r\n", elevatorControllerGetFloor(), target_floor);
+    }
 
     /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
     while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET 
