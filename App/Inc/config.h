@@ -101,4 +101,15 @@
 /* 문이 열리고/닫히는 데 걸리는 대략적 시간(ms). 실측 후 조정 */
 #define DOOR_MOVE_TIME_MS    500U
 
+/*
+ * 층 위치 표시 LED 
+ * 1층=빨강(PB6), 2층=노랑(PA7), 3층=초록(PA6)
+ */
+#define FLOOR_LED_1_GPIO_Port LED_1_GPIO_Port
+#define FLOOR_LED_1_Pin       LED_1_Pin
+#define FLOOR_LED_2_GPIO_Port LED_2_GPIO_Port
+#define FLOOR_LED_2_Pin       LED_2_Pin
+#define FLOOR_LED_3_GPIO_Port LED_3_GPIO_Port
+#define FLOOR_LED_3_Pin       LED_3_Pin
+
 #endif /* APP_INC_CONFIG_H_ */
