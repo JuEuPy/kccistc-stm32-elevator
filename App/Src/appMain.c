@@ -6,6 +6,7 @@
 #include "floorSensor.h"
 #include "floorEncoder.h"
 #include "elevatorController.h"
+#include "door.h"
 #include "main.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
@@ -75,6 +76,29 @@ void appTestMotor(void)
     motorStop();
 }
 
+
+/*
+ * 서보 도어 배선/각도 확인용 수동 테스트. 0 -> 90 -> 180 -> 90 -> 0도 순으로 움직여본다.
+ */
+void appTestDoor(void)
+{
+    doorInit();
+
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
+
+    doorSetServoAngle(90);
+    HAL_Delay(1000);
+
+    doorSetServoAngle(180);
+    HAL_Delay(1000);
+
+    doorSetServoAngle(90);
+    HAL_Delay(1000);
+
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
+}
 
 /*
  * 모터 축 엔코더 배선 확인용 수동 테스트.

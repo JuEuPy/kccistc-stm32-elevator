@@ -97,6 +97,7 @@ int main(void)
 
 
   appInit();
+  appTestDoor();
   // appTestMotor();
   // appTestFloorSensor();
   // appTestFloorEncoder();

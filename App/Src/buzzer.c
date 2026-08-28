@@ -11,12 +11,15 @@ void buzzerPlayTone(uint16_t frequency_hz, uint16_t duration_ms){
 
     arr = (BUZZER_TIM_CLOCK_HZ / frequency_hz) - 1U;
     __HAL_TIM_SET_AUTORELOAD(&BUZZER_PWM_TIM, arr);         //음높이 결정
-    __HAL_TIM_SET_COMPARE(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL, arr / 2U);
+    __HAL_TIM_SET_COMPARE(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL, arr / 10U);
     HAL_TIM_GenerateEvent(&BUZZER_PWM_TIM, TIM_EVENTSOURCE_UPDATE);
 
     HAL_TIM_PWM_Start(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL); //출력
     HAL_Delay(duration_ms);
     HAL_TIM_PWM_Stop(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL);
+
+    //잔여 전압 클리어
+    __HAL_TIM_SET_COMPARE(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL, 0U);
 }
 
 void buzzerPlayFloorTone(uint8_t floor){
