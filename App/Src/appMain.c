@@ -117,7 +117,7 @@ void appTestButtonMove(void){
             target_floor = 3;
         }
 
-        if (target_floor == 0) {
+        if (target_floor == 0 || target_floor == current_floor) {
             continue;
         }
 
