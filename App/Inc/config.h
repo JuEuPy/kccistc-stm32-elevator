@@ -15,7 +15,7 @@
 #define APP_TICK_MS         1U
 
 /*
- * 모터 드라이버 (CubeMX 확정: MOT_IN3/IN4, main.h 참고)
+ * =============================================== 모터 드라이버 (CubeMX 확정: MOT_IN3/IN4, main.h 참고)
  */
 
 // 정회전 (상승)
@@ -26,28 +26,26 @@
 #define MOTOR_IN2_GPIO_Port  MOT_IN4_GPIO_Port
 #define MOTOR_IN2_Pin        MOT_IN4_Pin
 
-/*
- * 구동 인가 (pwm 으로 속도 제어)
- * CubeMX에서 TIM4를 PWM 모드로 생성 필요
- */
+// 구동 인가 (pwm 으로 속도 제어)
+ 
 #define MOTOR_PWM_TIM        htim4
 #define MOTOR_PWM_CHANNEL    TIM_CHANNEL_3
 #define MOTOR_PWM_ARR        999U   // Counter Period 
 
-/* 속도(%) 기본값/범위: 나중에 실측 후 조정 */
+// 속도(%) 
 #define MOTOR_SPEED_DEFAULT  75U
 #define MOTOR_SPEED_MIN      75U
 #define MOTOR_SPEED_MAX      100U
 
 /*
- * 층 위치 감지. 
+ * =============================================== 층 위치 감지. 
  * 구조물 총 높이 45cm / 3개 층 = 층당 15cm
  */
 #define STRUCTURE_HEIGHT_CM  45U
 #define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
 
 /*
- * TRIG: 출력, ECHO: 입력 (CubeMX 확정: SONIC_TRIG/ECHO, main.h 참고)
+ * TRIG: 출력, ECHO: 입력
  */
 #define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
 #define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
@@ -78,17 +76,11 @@
 
 /* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
-
-/*
- * 엔코더 카운터가 이 값을 넘으면(절대값 기준) 0으로 재설정한다.
- * TIM3는 16비트라 32767을 넘으면 음수로 언더플로우(wraparound)하므로 그 전에 리셋.
- * NUM_FLOORS=3 기준 최대 이동거리(2 * FLOOR_15CM_PULSE)보다 넉넉히 커야 함.
- */
 #define ENCODER_PULSE_RESET_THRESHOLD  30000
 
 /*
- * 외문(슬라이딩) 서보모터 1개 
- * 임시값. 실측 후 조정 필요.
+ * =============================================== 문 서보모터 1개 기준
+ * 임시값. 
  */
 #define DOOR_PWM_TIM         htim2
 #define DOOR_PWM_CHANNEL     TIM_CHANNEL_2
@@ -102,7 +94,7 @@
 #define DOOR_MOVE_TIME_MS    500U
 
 /*
- * 층 위치 표시 LED 
+ * =============================================== 층 위치 표시 LED 
  * 1층=빨강(PB6), 2층=노랑(PA7), 3층=초록(PA6)
  */
 #define FLOOR_LED_1_GPIO_Port LED_1_GPIO_Port
@@ -111,5 +103,18 @@
 #define FLOOR_LED_2_Pin       LED_2_Pin
 #define FLOOR_LED_3_GPIO_Port LED_3_GPIO_Port
 #define FLOOR_LED_3_Pin       LED_3_Pin
+
+/*
+ * =============================================== 부저 
+ */
+#define BUZZER_PWM_TIM        htim11
+#define BUZZER_PWM_CHANNEL    TIM_CHANNEL_1
+#define BUZZER_TIM_CLOCK_HZ   1000000U
+
+/* 계이름 주파수(Hz)*/
+#define BUZZER_NOTE_DO_HZ     262U
+#define BUZZER_NOTE_MI_HZ     330U
+#define BUZZER_NOTE_SOL_HZ    392U
+#define BUZZER_NOTE_DURATION_MS 200U
 
 #endif /* APP_INC_CONFIG_H_ */
