@@ -94,6 +94,7 @@ void elevatorControllerUpdate(void){
         }
 
         s_target_floor = schedulerGetNextTarget(s_current_floor);
+        printf("IDLE: 목표층t=%u (현재=%u)\r\n", s_target_floor, s_current_floor);
         s_departure_floor = s_current_floor;
         elevatorControllerLightFloorLed(s_target_floor);
 
