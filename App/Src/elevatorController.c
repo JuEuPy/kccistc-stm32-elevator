@@ -58,6 +58,7 @@ void elevatorControllerInit(void){
     buzzerPlayFloorTone(s_current_floor); // 시작 층 알림음
 }
 
+// 엘리베이터 상태 반환
 ElevatorState_t elevatorControllerGetState(void){
     return s_state;
 }
@@ -83,6 +84,7 @@ static void elevatorControllerStartStep(uint8_t target_floor)
 }
 
 /*
+ * 층 이동/도착/에러 처리 등 엘리베이터 상태 관리
  * 논블로킹 상태 머신. appRun()에서 매 tick마다 호출된다.
  */
 void elevatorControllerUpdate(void){
@@ -93,9 +95,9 @@ void elevatorControllerUpdate(void){
             break;
         }
 
-        s_target_floor = schedulerGetNextTarget(s_current_floor);
-        printf("IDLE: 목표층t=%u (현재=%u)\r\n", s_target_floor, s_current_floor);
+        s_target_floor = schedulerGetNextTarget(s_current_floor); 
         s_departure_floor = s_current_floor;
+        elevatorControllerClearFloorLed(s_departure_floor);
         elevatorControllerLightFloorLed(s_target_floor);
 
         if (s_target_floor == s_current_floor) {
@@ -107,7 +109,9 @@ void elevatorControllerUpdate(void){
 
     case STATE_MOVING_UP:
         {
-            int32_t delta = s_step_start_pulse - floorEncoderGetPulseCount();
+            int32_t pulse = floorEncoderGetPulseCount();                // pulse
+            int32_t raw_delta = pulse - s_step_start_pulse;         
+            int32_t delta = (raw_delta < 0) ? -raw_delta : raw_delta;   // 이번 스텝에서 이동량
             static uint32_t s_debug_tick = 0;
 
             if (delta >= (int32_t)FLOOR_15CM_PULSE) {
@@ -119,18 +123,22 @@ void elevatorControllerUpdate(void){
                 } else {
                     elevatorControllerStartStep(s_target_floor);
                 }
+            } else if ((HAL_GetTick() - s_step_start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
+                motorStop();
+                s_state = STATE_ERROR;
             } else if ((HAL_GetTick() - s_debug_tick) > 300U) {
                 /* TODO(임시 디버그): 펄스가 실제로 움직이는지 확인용. 원인 파악되면 지울 것 */
                 s_debug_tick = HAL_GetTick();
-                printf("MOVING_UP debug: delta=%ld / target=%u\r\n", (long)delta, (unsigned)FLOOR_15CM_PULSE);
+                printf("MOVING_UP debug: pulse=%ld delta=%ld / target=%u\r\n", (long)pulse, (long)delta, (unsigned)FLOOR_15CM_PULSE);
             }
         }
-        /* TODO: MOTOR_MOVE_TIMEOUT_MS 기반 타임아웃 (현재 비활성화 상태) */
         break;
 
     case STATE_MOVING_DOWN:
         {
-            int32_t delta = floorEncoderGetPulseCount() - s_step_start_pulse;
+            int32_t pulse = floorEncoderGetPulseCount();
+            int32_t raw_delta = pulse - s_step_start_pulse;
+            int32_t delta = (raw_delta < 0) ? -raw_delta : raw_delta;
             static uint32_t s_debug_tick = 0;
 
             if (delta >= (int32_t)FLOOR_15CM_PULSE) {
@@ -148,15 +156,12 @@ void elevatorControllerUpdate(void){
             } else if ((HAL_GetTick() - s_debug_tick) > 300U) {
                 /* TODO(임시 디버그): 펄스가 실제로 움직이는지 확인용. 원인 파악되면 지울 것 */
                 s_debug_tick = HAL_GetTick();
-                printf("MOVING_DOWN debug: delta=%ld / target=%u\r\n", (long)delta, (unsigned)FLOOR_15CM_PULSE);
+                printf("MOVING_DOWN debug: pulse=%ld delta=%ld / target=%u\r\n", (long)pulse, (long)delta, (unsigned)FLOOR_15CM_PULSE);
             }
         }
         break;
 
     case STATE_ARRIVED:
-        if (s_departure_floor != s_target_floor) {
-            elevatorControllerClearFloorLed(s_departure_floor);
-        }
         buzzerPlayFloorTone(s_target_floor);
         printf("arrived at floor %u\r\n", s_current_floor);
 
