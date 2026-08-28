@@ -7,26 +7,23 @@
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
 
-// static void elevatorControllerUpdateFloorLed(void);
 static ElevatorState_t s_state;
 static uint8_t s_current_floor = FLOOR_MIN; /* 현재 층 위치, 기본값 1층에서 시작 */
 
-
-/* 현재 층에 해당하는 LED만 켜고, 층 알림음(도/미/솔)을 재생한다 */
+/* 지나가는 층마다 갱신: 현재 층에 해당하는 LED만 켜고 나머지는 끈다 */
 static void elevatorControllerNotifyFloor(void)
 {
     HAL_GPIO_WritePin(FLOOR_LED_1_GPIO_Port, FLOOR_LED_1_Pin, (s_current_floor == 1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(FLOOR_LED_2_GPIO_Port, FLOOR_LED_2_Pin, (s_current_floor == 2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
     HAL_GPIO_WritePin(FLOOR_LED_3_GPIO_Port, FLOOR_LED_3_Pin, (s_current_floor == 3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-
-    buzzerPlayFloorTone(s_current_floor);
 }
 
 void elevatorControllerInit(void){
     floorEncoderInit();
     motorInit();
     // buzzerInit();
-    elevatorControllerNotifyFloor(); // 시작 층(1층) LED/부저 알림 
+    elevatorControllerNotifyFloor(); 
+    buzzerPlayFloorTone(s_current_floor); // 시작 층 알림음
 }
 
 
@@ -87,5 +84,6 @@ bool elevatorControllerMoveToFloor(uint8_t target_floor){
     }
 
     s_state = STATE_ARRIVED;
+    buzzerPlayFloorTone(s_current_floor); /* 최종 도착 층에서만 1회 울림 */
     return true;
 }
