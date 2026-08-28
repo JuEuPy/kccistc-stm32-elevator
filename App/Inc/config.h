@@ -11,6 +11,9 @@
 /* 버튼 디바운싱 시간 (ms) */
 #define BUTTON_DEBOUNCE_MS  20U
 
+/* 층 호출 큐에 동시에 저장 가능한 최대 요청 수 */
+#define SCHEDULER_QUEUE_CAPACITY 2U
+
 /* 버튼/센서 스캔 주기 (ms), appRun()에서 SysTick 기반으로 사용 */
 #define APP_TICK_MS         1U
 

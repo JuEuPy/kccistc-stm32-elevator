@@ -1,6 +1,7 @@
 #include "button.h"
 #include "config.h"
 #include "scheduler.h"
+#include "elevatorController.h"
 #include "main.h"
 
 #include <stdbool.h>
@@ -52,7 +53,9 @@ void buttonScan(void){
 
         if ((HAL_GetTick() - btn->press_start_tick) >= BUTTON_DEBOUNCE_MS) {
             btn->confirmed = true;
-            schedulerAddRequest(btn->floor);
+            if (schedulerAddRequest(btn->floor)) {
+                elevatorControllerLightFloorLed(btn->floor); /* 큐에 등록된 순간 바로 점등 */
+            }
         }
     }
 }
