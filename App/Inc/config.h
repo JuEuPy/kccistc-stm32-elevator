@@ -76,11 +76,29 @@
 #define ENCODER_TIM          htim3
 #define FLOOR_15CM_PULSE     10000U // 임시값
 
+/* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
+#define MOTOR_MOVE_TIMEOUT_MS 5000U
+
 /*
  * 엔코더 카운터가 이 값을 넘으면(절대값 기준) 0으로 재설정한다.
  * TIM3는 16비트라 32767을 넘으면 음수로 언더플로우(wraparound)하므로 그 전에 리셋.
  * NUM_FLOORS=3 기준 최대 이동거리(2 * FLOOR_15CM_PULSE)보다 넉넉히 커야 함.
  */
-#define ENCODER_PULSE_RESET_THRESHOLD  25000
+#define ENCODER_PULSE_RESET_THRESHOLD  30000
+
+/*
+ * 외문(슬라이딩) 서보모터 1개 
+ * 임시값. 실측 후 조정 필요.
+ */
+#define DOOR_PWM_TIM         htim2
+#define DOOR_PWM_CHANNEL     TIM_CHANNEL_2
+#define DOOR_PWM_ARR         1999U   // Counter Period
+
+/* 닫힘/열림 위치에 대응하는 서보 펄스폭(CCR). 임시값(1.0ms/1.5ms 부근) */
+#define DOOR_CLOSED_CCR      100U
+#define DOOR_OPEN_CCR        150U
+
+/* 문이 열리고/닫히는 데 걸리는 대략적 시간(ms). 실측 후 조정 */
+#define DOOR_MOVE_TIME_MS    500U
 
 #endif /* APP_INC_CONFIG_H_ */

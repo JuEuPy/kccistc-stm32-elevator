@@ -1,3 +1,5 @@
+//미사용
+
 #include "floorSensor.h"
 #include "config.h"
 

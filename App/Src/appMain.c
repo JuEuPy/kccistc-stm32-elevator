@@ -7,6 +7,7 @@
 #include "floorEncoder.h"
 #include "elevatorController.h"
 #include "main.h"
+#include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
 
@@ -16,11 +17,39 @@ int __io_putchar(int ch){
 }
 
 void appInit(void){
-    /* TODO */
+    buttonInit();
+    schedulerInit();
+    elevatorControllerInit();
 }
 
+/*
+ * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼을 읽어 목표 층으로 이동.
+ * buttonScan()은 디바운싱된 눌림을 schedulerAddRequest()로 기록해둔다(나중의 큐 처리를 위함).
+ */
 void appRun(void){
-    /* TODO */
+    buttonScan();
+
+    uint8_t target_floor = 0;
+
+    if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
+        target_floor = 1;
+    } else if (HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET) {
+        target_floor = 2;
+    } else if (HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
+        target_floor = 3;
+    }
+
+    if (target_floor == 0) {
+        return;
+    }
+
+    elevatorControllerMoveToFloor(target_floor);
+    printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
+
+    /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
+    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET 
+        || HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
+    }
 }
 
 /*
@@ -31,7 +60,7 @@ void appTestMotor(void)
 {
     motorInit();
 
-    // motorUp();
+    // motoDown();
     // HAL_Delay(1000);
 
     // motorStop();
@@ -43,23 +72,6 @@ void appTestMotor(void)
     motorStop();
 }
 
-/*
- * 초음파 센서 배선 확인용 수동 테스트.
- */
-void appTestFloorSensor(void)
-{
-    floorSensorInit();
-
-    while (1) {
-        if (floorSensorTrigger()) {
-            printf("거리: %u cm\r\n", floorSensorGetDistanceCm());
-        } else {
-            printf("거리: timeout/out of range\r\n");
-        }
-
-        HAL_Delay(300);
-    }
-}
 
 /*
  * 모터 축 엔코더 배선 확인용 수동 테스트.
@@ -74,81 +86,3 @@ void appTestFloorEncoder(void)
     }
 }
 
-
-// void appTestFloorEncoderCalibration(void)
-// {
-//     floorEncoderInit();
-//     motorInit();
-
-//     motorUp();
-
-//     while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) != GPIO_PIN_RESET) {
-//         printf("pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-//     }
-
-//     motorStop();
-//     printf("STOP! final pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-
-//     while (1) {
-//         /* 최종 값을 계속 볼 수 있도록 정지 상태 유지 */
-//     }
-// }
-
-/*
- * 버튼 -> 목표 층 이동 직결 테스트 (elevatorController 안 거침).
- * BTN_1=1층, BTN_2=2층, BTN_3=3층. 현재 층을 기억해뒀다가,
- * 목표 층까지 필요한 만큼 한 스텝(FLOOR_15CM_PULSE)씩 반복 이동한다.
- * (motorUp()은 펄스가 감소, motorDown()은 증가하는 걸 실측으로 확인했으므로 부호를 그에 맞춤)
- */
-void appTestButtonMove(void){
-    uint8_t current_floor = FLOOR_MIN; /* 기본값 1층에서 시작 */
-
-    floorEncoderInit();
-    motorInit();
-
-    while (1) {
-        uint8_t target_floor = 0;
-
-        if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
-            target_floor = 1;
-        } else if (HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET) {
-            target_floor = 2;
-        } else if (HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-            target_floor = 3;
-        }
-
-        if (target_floor == 0 || target_floor == current_floor) {
-            continue;
-        }
-
-        while (current_floor < target_floor) {
-            int32_t start_pulse = floorEncoderGetPulseCount();
-
-            motorUp();
-            while ((start_pulse - floorEncoderGetPulseCount()) < (int32_t)FLOOR_15CM_PULSE) {
-            }
-            motorStop();
-
-            current_floor++;
-        }
-
-        while (current_floor > target_floor) {
-            int32_t start_pulse = floorEncoderGetPulseCount();
-
-            motorDown();
-            while ((floorEncoderGetPulseCount() - start_pulse) < (int32_t)FLOOR_15CM_PULSE) {
-            }
-            motorStop();
-
-            current_floor--;
-        }
-
-        printf("arrived at floor %u\r\n", current_floor);
-
-        /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
-        while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET ||
-               HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET ||
-               HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-        }
-    }
-}

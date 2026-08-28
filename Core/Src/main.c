@@ -95,12 +95,11 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  // appInit();
+  appInit();
   // appTestMotor();
   // appTestFloorSensor();
   // appTestFloorEncoder();
   // appTestFloorEncoderCalibration();
-  appTestButtonMove();
 
 
   /* USER CODE END 2 */
