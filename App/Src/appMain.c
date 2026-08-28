@@ -84,7 +84,7 @@ void appTestDoor(void)
 {
     doorInit();
 
-    doorSetServoAngle(1);
+    doorSetServoAngle(0);
     HAL_Delay(1000);
 
     // doorSetServoAngle(90);
