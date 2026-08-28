@@ -5,6 +5,7 @@
 #include "main.h"
 
 #include <stdbool.h>
+#include <stdio.h>
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -48,12 +49,15 @@ void buttonScan(void){
         if (!btn->timing) {
             btn->timing = true;
             btn->press_start_tick = HAL_GetTick();
+            printf("버튼%u 눌렀다~~~~ \r\n", btn->floor);
             continue;
         }
 
         if ((HAL_GetTick() - btn->press_start_tick) >= BUTTON_DEBOUNCE_MS) {
             btn->confirmed = true;
-            if (schedulerAddRequest(btn->floor)) {
+            bool queued = schedulerAddRequest(btn->floor);
+            printf("버튼%u 등록됬다구~~~, schedulerAddRequest=%d\r\n", btn->floor, (int)queued);
+            if (queued) {
                 elevatorControllerLightFloorLed(btn->floor); /* 큐에 등록된 순간 바로 점등 */
             }
         }
