@@ -11,7 +11,7 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
-#include "dispaly.h"
+#include "display.h"
 
 int __io_putchar(int ch){
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
@@ -22,14 +22,18 @@ void appInit(void){
     buttonInit();
     schedulerInit();
     elevatorControllerInit();
+        ssd1306Init();
+
+    
 }
 
 /*
  * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼 
  */
 void appRun(void){
-    buttonScan();
-    elevatorControllerUpdate();
+   // buttonScan();
+    //elevatorControllerUpdate();
+    appTestDisplay();
 }
 
 /*
@@ -38,7 +42,7 @@ void appRun(void){
  */
 void appTestMotor(void)
 {
-    motorInit();
+   // motorInit();
 
     // motoDown();
     // HAL_Delay(1000);
@@ -90,9 +94,19 @@ void appTestFloorEncoder(void)
 }
 
 void appTestDisplay(void){
-    MX_I2C3_Init();
-    // 디스플레이 초기화
+   
+    // 디스플레이 초기화 확인
+    if (!ssd1306Init()) {
+        // 초기화 실패 시 처리 (필요한 경우 에러 LED 점등 등)
+        return;
+    }
+
     // --- 3층 정지 화면 호출 ---
     int currentFloor = 3;
     drawElevatorScreen(currentFloor, ELEVATOR_IDLE);
+    
+    // 화면이 꺼지지 않도록 유지 (테스트용)
+    while (1) {
+        // 필요에 따라 층수나 상태를 변경하는 로직 추가 가능
+    }
 }

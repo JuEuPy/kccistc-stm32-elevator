@@ -1,10 +1,22 @@
 #include "display.h"
-#include "bitmaps.h" // 비트맵 헤더 포함
-#include <stdio.h>   // sprintf 사용을 위해 필요
+#include "bitmap.h" 
+#include <stdio.h>   
+#include "i2c.h"
+#include "stm32f4xx_hal_i2c.h"
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
 
 /**
  * @brief 디바이스 응답 확인 및 SSD1306 초기화 함수
  */
+
+static void writeCommand(uint8_t cmd){
+    HAL_I2C_Mem_Write(&hi2c3, SSD1306_I2C_ADDR ,  0x00,  1,  &cmd,  1,  10);
+}
+
+uint8_t ssd1306_buffer[SSD1306_WIDTH * SSD1306_HEIGHT / 8];
+
 bool ssd1306Init(void)
 {
     // 디바이스 응답 확인
@@ -169,7 +181,7 @@ void drawElevatorScreen(int floor, ElevatorState state) {
     ssd1306DrawRect(2, 2, SSD1306_WIDTH - 4, SSD1306_HEIGHT - 4, SSD1306_COLOR_WHITE);
 
     // 층수 문자열 생성 (음수면 B, 양수면 F 붙임)
-    char floorStr[8];
+    char floorStr[16];
     if (floor < 0) {
         sprintf(floorStr, "B%d", -floor);
     } else {
@@ -181,8 +193,8 @@ void drawElevatorScreen(int floor, ElevatorState state) {
         charLen++;
     }
 
-    int bitmapWidth = 16;
-    int bitmapHeight = 16;
+    int bitmapWidth = 24;  // 가로 24픽셀
+    int bitmapHeight = 28; // 세로 28픽셀로 변경
     int gap = 2; // 글자 간격
 
     int textTotalWidth = (charLen * bitmapWidth) + ((charLen - 1) * gap);
@@ -191,6 +203,8 @@ void drawElevatorScreen(int floor, ElevatorState state) {
     // 전체 콘텐츠 가로 폭 및 시작 좌표 계산 (화면 중앙 정렬)
     int totalWidth = arrowSpace + textTotalWidth;
     int16_t startX = (SSD1306_WIDTH - totalWidth) / 2;
+    
+    // 수직 중앙 정렬 (필요시 뒤에 + 2 또는 + 4를 붙여 미세 조정 가능)
     int16_t contentY = (SSD1306_HEIGHT - bitmapHeight) / 2;
 
     int16_t currentX = startX;
@@ -205,7 +219,7 @@ void drawElevatorScreen(int floor, ElevatorState state) {
         currentX += bitmapWidth + 4;
     }
 
-    // 2. 층수 문자열을 순서대로 큰 비트맵으로 출력
+    // 2. 층수 문자열을 순서대로 비트맵으로 출력
     for (int i = 0; i < charLen; i++) {
         const uint8_t *bmp = getBitmapForChar(floorStr[i]);
         if (bmp != NULL) {

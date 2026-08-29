@@ -43,16 +43,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # CONFIGURE_DEPENDS를 붙이면 새 파일 생성 시 자동 감지됨
-file(GLOB APP_SOURCES CONFIGURE_DEPENDS "App/Src/*.c")
+file(GLOB_RECURSE APP_SOURCES CONFIGURE_DEPENDS "App/*.c")
 
-target_sources(${CMAKE_PROJECT_NAME} PRIVATE
-    Core/Src/main.c
-    ${APP_SOURCES}
-)
+target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${APP_SOURCES})
 # Add include paths
 target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined include paths
     App/Inc
+    App/Src
+    Core/Inc
 
 )
 
