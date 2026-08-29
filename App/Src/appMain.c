@@ -24,7 +24,7 @@ void appInit(void){
 }
 
 /*
- * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼 
+ * 버튼(BTN_1/2/3)과 홀센서 버튼(BTN_HALL_1/2/3) 모두 같은 요청 큐에 등록된다.
  */
 void appRun(void){
     buttonScan();

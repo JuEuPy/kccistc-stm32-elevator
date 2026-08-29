@@ -11,16 +11,8 @@
 static ElevatorState_t s_state;
 static uint8_t s_current_floor = FLOOR_MIN;   /* 현재 층 위치, 기본값 1층에서 시작 */
 static uint8_t s_target_floor;                /* 지금 향하고 있는 목표 층 */
-static uint8_t s_departure_floor;             /* 이번 이동을 시작한 출발 층 (도착 후 LED 정리용) */
 static int32_t s_step_start_pulse;            /* 현재 한 층 스텝을 시작한 시점의 펄스값 */
 static uint32_t s_step_start_tick;            /* 현재 한 층 스텝을 시작한 시점의 tick */
-
-/* floor에 해당하는 LED만 켜고 나머지는 끈다 */
-static void elevatorControllerSetFloorLed(uint8_t floor){
-    HAL_GPIO_WritePin(FLOOR_LED_1_GPIO_Port, FLOOR_LED_1_Pin, (floor == 1) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(FLOOR_LED_2_GPIO_Port, FLOOR_LED_2_Pin, (floor == 2) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-    HAL_GPIO_WritePin(FLOOR_LED_3_GPIO_Port, FLOOR_LED_3_Pin, (floor == 3) ? GPIO_PIN_SET : GPIO_PIN_RESET);
-}
 
 void elevatorControllerLightFloorLed(uint8_t floor){
     switch (floor) {
@@ -54,7 +46,9 @@ void elevatorControllerInit(void){
     motorInit();
     // buzzerInit();
     s_state = STATE_IDLE;
-    elevatorControllerSetFloorLed(s_current_floor);
+    elevatorControllerClearFloorLed(1);
+    elevatorControllerClearFloorLed(2);
+    elevatorControllerClearFloorLed(3);
     buzzerPlayFloorTone(s_current_floor); // 시작 층 알림음
 }
 
@@ -95,9 +89,8 @@ void elevatorControllerUpdate(void){
             break;
         }
 
-        s_target_floor = schedulerGetNextTarget(s_current_floor); 
-        s_departure_floor = s_current_floor;
-        elevatorControllerClearFloorLed(s_departure_floor);
+        s_target_floor = schedulerGetNextTarget(s_current_floor);
+        printf("IDLE: 목표층t=%u (현재=%u)\r\n", s_target_floor, s_current_floor);
         elevatorControllerLightFloorLed(s_target_floor);
 
         if (s_target_floor == s_current_floor) {
@@ -162,6 +155,7 @@ void elevatorControllerUpdate(void){
         break;
 
     case STATE_ARRIVED:
+        elevatorControllerClearFloorLed(s_target_floor); /* 도착한 층의 호출 LED를 끈다 */
         buzzerPlayFloorTone(s_target_floor);
         printf("arrived at floor %u\r\n", s_current_floor);
 
