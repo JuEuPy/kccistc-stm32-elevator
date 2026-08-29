@@ -1,0 +1,90 @@
+#include "appMain.h"
+#include "config.h"
+#include "button.h"
+#include "scheduler.h"
+#include "motor.h"
+#include "floorSensor.h"
+#include "floorEncoder.h"
+#include "elevatorController.h"
+#include "door.h"
+#include "main.h"
+#include "stm32f4xx_hal_gpio.h"
+#include "usart.h"
+#include <stdio.h>
+
+int __io_putchar(int ch){
+    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    return ch;
+}
+
+void appInit(void){
+    buttonInit();
+    schedulerInit();
+    elevatorControllerInit();
+}
+
+/*
+ * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼 
+ */
+void appRun(void){
+    buttonScan();
+    elevatorControllerUpdate();
+}
+
+/*
+ * 모터 배선/방향이 맞는지 확인하기 위한 수동 테스트.
+ * elevatorController/스케줄러 없이 motor.c의 API만 직접 호출해서 상승 -> 정지 -> 하강 -> 정지를 실행
+ */
+void appTestMotor(void)
+{
+    motorInit();
+
+    // motoDown();
+    // HAL_Delay(1000);
+
+    // motorStop();
+    // HAL_Delay(500);
+
+     motorDown();
+     HAL_Delay(1000);
+
+    motorStop();
+}
+
+
+/*
+ * 서보 도어 배선/각도 확인용 수동 테스트. 0 -> 90 -> 180 -> 90 -> 0도 순으로 움직여본다.
+ */
+void appTestDoor(void)
+{
+    doorInit();
+
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
+
+    // doorSetServoAngle(90);
+    // HAL_Delay(1000);
+
+    doorSetServoAngle(180);
+    HAL_Delay(1000);
+
+    // doorSetServoAngle(90);
+    // HAL_Delay(1000);
+
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
+}
+
+/*
+ * 모터 축 엔코더 배선 확인용 수동 테스트.
+ */
+void appTestFloorEncoder(void)
+{
+    floorEncoderInit();
+
+    while (1) {
+        printf("=====pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
+        HAL_Delay(300);
+    }
+}
+
