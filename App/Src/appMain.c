@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
+#include "dispaly.h"
 
 int __io_putchar(int ch){
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
@@ -45,10 +46,10 @@ void appTestMotor(void)
     // motorStop();
     // HAL_Delay(500);
 
-     motorDown();
-     HAL_Delay(1000);
+   //  motorDown();
+   //  HAL_Delay(1000);
 
-    motorStop();
+   // motorStop();
 }
 
 
@@ -88,3 +89,10 @@ void appTestFloorEncoder(void)
     }
 }
 
+void appTestDisplay(void){
+    MX_I2C3_Init();
+    // 디스플레이 초기화
+    // --- 3층 정지 화면 호출 ---
+    int currentFloor = 3;
+    drawElevatorScreen(currentFloor, ELEVATOR_IDLE);
+}
