@@ -20,9 +20,9 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 
 | 호출 구분 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
-| 1층 호출 (상향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 2층 호출 (하향) | PA9 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 3층 호출 (하향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 1층 호출 (상향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 2층 호출 (하향) | PA2 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 3층 호출 (하향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 ## 모터 드라이버 (L298N & SE-DM185)
 
 | 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
