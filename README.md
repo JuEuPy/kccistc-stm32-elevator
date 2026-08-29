@@ -16,13 +16,13 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 | 2층 | PC1 | A4 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 | 3층 | PC2 | CN7 (Pin 35) | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 
-## 층 위치 감지 센서 (HC-SR04 초음파 센서)
+### 각 층 승강장 호출 버튼 
 
-| 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+| 호출 구분 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
-| Trig | PA0 | A0 | GPIO_Output | 10µs 트리거 펄스 발신 |
-| Echo | PA1 | A1 | GPIO_Input | 펄스 폭 측정 (실시간 거리 계산으로 층 판별) |
-
+| 1층 호출 (상향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 2층 호출 (하향) | PA9 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 3층 호출 (하향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 ## 모터 드라이버 (L298N & SE-DM185)
 
 | 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
