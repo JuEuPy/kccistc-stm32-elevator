@@ -63,10 +63,12 @@ void Error_Handler(void);
 #define BTN_2_GPIO_Port GPIOC
 #define BTN_3_Pin GPIO_PIN_2
 #define BTN_3_GPIO_Port GPIOC
-#define SONIC_TRIG_Pin GPIO_PIN_0
-#define SONIC_TRIG_GPIO_Port GPIOA
-#define SONIC_ECHO_Pin GPIO_PIN_1
-#define SONIC_ECHO_GPIO_Port GPIOA
+#define BTN_HALL_1_Pin GPIO_PIN_0
+#define BTN_HALL_1_GPIO_Port GPIOA
+#define BTN_HALL_2_Pin GPIO_PIN_1
+#define BTN_HALL_2_GPIO_Port GPIOA
+#define BTN_HALL_3_Pin GPIO_PIN_4
+#define BTN_HALL_3_GPIO_Port GPIOA
 #define LED_3_Pin GPIO_PIN_6
 #define LED_3_GPIO_Port GPIOA
 #define LED_2_Pin GPIO_PIN_7
