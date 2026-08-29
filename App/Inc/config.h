@@ -49,11 +49,6 @@
 
 /*
  * TRIG: 출력, ECHO: 입력
- */
-#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
-#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
-#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
-#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
 
 /* 응답 타임아웃 */
 #define SENSOR_ECHO_START_TIMEOUT_US 5000U  
