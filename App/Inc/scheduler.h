@@ -7,8 +7,8 @@
 /* 목표 층 큐 초기화 */
 void schedulerInit(void);
 
-/* 호출 버튼 등에서 확정된 목표 층 등록 */
-void schedulerAddRequest(uint8_t floor);
+/* 호출 버튼 등에서 확정된 목표 층 등록. 실제로 큐에 들어갔으면 true (이미 있거나 꽉 찼으면 false) */
+bool schedulerAddRequest(uint8_t floor);
 
 /* 대기 중인 목표 층 요청이 있는지 여부 */
 bool schedulerHasPendingRequests(void);

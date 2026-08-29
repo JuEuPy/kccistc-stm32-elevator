@@ -20,12 +20,11 @@
 #include "main.h"
 #include "i2c.h"
 #include "tim.h"
-#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "appMain.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -91,9 +90,24 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_TIM4_Init();
+<<<<<<< HEAD
   MX_USART2_UART_Init();
   MX_I2C3_Init();
+=======
+  MX_TIM3_Init();
+  MX_TIM11_Init();
+  MX_TIM1_Init();
+>>>>>>> ae6c6286146a95c65c2bcecd24bf32f25c91eb24
   /* USER CODE BEGIN 2 */
+
+
+  appInit();
+  appTestDoor();
+  // appTestMotor();
+  // appTestFloorSensor();
+  // appTestFloorEncoder();
+  // appTestFloorEncoderCalibration();
+
 
   /* USER CODE END 2 */
 
@@ -104,6 +118,7 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    appRun();
   }
   /* USER CODE END 3 */
 }
