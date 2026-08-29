@@ -36,11 +36,10 @@ void motorDown(void){
     printf("motorDown: IN1(IN3)=0 IN2(IN4)=1 speed=%u%%\r\n", s_speed_percent);
 }
 
-// 모터 정지 (브레이크: ENA=100% 고정 + IN1/IN2=0 → 진리표상 "브레이크" 상태)
+// 모터 정지
 void motorStop(void){
     HAL_GPIO_WritePin(MOTOR_IN1_GPIO_Port, MOTOR_IN1_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(MOTOR_IN2_GPIO_Port, MOTOR_IN2_Pin, GPIO_PIN_RESET);
-    __HAL_TIM_SET_COMPARE(&MOTOR_PWM_TIM, MOTOR_PWM_CHANNEL, MOTOR_PWM_ARR + 1U);
     s_motor_state = MOTOR_STATE_STOPPED;
     printf("motorStop: IN1(IN3)=0 IN2(IN4)=0 ENA=100%%\r\n");
 }
