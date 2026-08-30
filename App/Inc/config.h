@@ -15,13 +15,6 @@
  * =============================================== 버튼 
  * 내부 조작과 각 층 외부 호출 버튼을 역할별로 구분해서 사용
  */
-#define BTN_1_GPIO_Port BTN_1_GPIO_Port
-#define BTN_1_Pin       BTN_1_Pin
-#define BTN_2_GPIO_Port BTN_2_GPIO_Port
-#define BTN_2_Pin       BTN_2_Pin
-#define BTN_3_GPIO_Port BTN_3_GPIO_Port
-#define BTN_3_Pin       BTN_3_Pin
-
 #define HALL_BTN_1_GPIO_Port  BTN_HALL_1_GPIO_Port
 #define HALL_BTN_1_Pin        BTN_HALL_1_Pin
 #define HALL_BTN_2_GPIO_Port  BTN_HALL_2_GPIO_Port
