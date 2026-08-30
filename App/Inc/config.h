@@ -94,14 +94,14 @@
  * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
  */
 #define ENCODER_TIM          htim3
-#define FLOOR_15CM_PULSE     6000U
+#define FLOOR_15CM_PULSE     3600U
 
 /* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
 #define ENCODER_PULSE_RESET_THRESHOLD  30000
 
 /* 한 층 도착 후 다음 목표로 넘어가기 전에 대기하는 시간(ms) */
-#define ARRIVAL_DWELL_MS      1500U
+#define ARRIVAL_DWELL_MS      3000U
 
 /*
  * =============================================== 문 서보모터 1개 기준
