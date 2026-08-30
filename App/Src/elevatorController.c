@@ -13,6 +13,7 @@ static uint8_t s_current_floor = FLOOR_MIN;   /* 현재 층 위치, 기본값 1�
 static uint8_t s_target_floor;                /* 지금 향하고 있는 목표 층 */
 static int32_t s_step_start_pulse;            /* 현재 한 층 스텝을 시작한 시점의 펄스값 */
 static uint32_t s_step_start_tick;            /* 현재 한 층 스텝을 시작한 시점의 tick */
+static uint32_t s_dwell_start_tick;           /* STATE_DWELL 진입 시각 */
 
 void elevatorControllerLightFloorLed(uint8_t floor){
     switch (floor) {
@@ -160,7 +161,14 @@ void elevatorControllerUpdate(void){
         printf("arrived at floor %u\r\n", s_current_floor);
 
         schedulerClearRequest(s_target_floor);
-        s_state = STATE_IDLE;
+        s_dwell_start_tick = HAL_GetTick();
+        s_state = STATE_DWELL;
+        break;
+
+    case STATE_DWELL:
+        if ((HAL_GetTick() - s_dwell_start_tick) >= ARRIVAL_DWELL_MS) {
+            s_state = STATE_IDLE;
+        }
         break;
 
     case STATE_ERROR:

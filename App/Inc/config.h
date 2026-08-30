@@ -100,6 +100,9 @@
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
 #define ENCODER_PULSE_RESET_THRESHOLD  30000
 
+/* 한 층 도착 후 다음 목표로 넘어가기 전에 대기하는 시간(ms) */
+#define ARRIVAL_DWELL_MS      1500U
+
 /*
  * =============================================== 문 서보모터 1개 기준
  * 임시값.
