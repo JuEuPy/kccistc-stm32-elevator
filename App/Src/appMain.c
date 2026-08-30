@@ -22,8 +22,8 @@ int __io_putchar(int ch){
 void appInit(void){
     buttonInit();
     schedulerInit();
-    // elevatorControllerInit();
-    // ssd1306Init();
+    elevatorControllerInit();
+    ssd1306Init();
 
     
 }
