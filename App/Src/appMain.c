@@ -36,7 +36,7 @@ void appRun(void){
     elevatorControllerUpdate();
     // appTestDisplay();
 
-    drawElevatorScreen(2, STATE_MOVING_DOWN);
+  //  drawElevatorScreen(2, STATE_MOVING_DOWN);
 }
 
 /*
