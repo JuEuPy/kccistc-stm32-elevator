@@ -25,5 +25,5 @@ uint8_t elevatorControllerGetFloor(void);
  * 큐에 새로 등록된 목표 층의 LED를 즉시 켠다
  */
 void elevatorControllerLightFloorLed(uint8_t floor);
-
+void elevatorControllerUpdateDisplay(void);
 #endif /* APP_INC_ELEVATORCONTROLLER_H_ */

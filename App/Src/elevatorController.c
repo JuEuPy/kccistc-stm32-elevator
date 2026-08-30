@@ -4,6 +4,7 @@
 #include "config.h"
 #include "floorEncoder.h"
 #include "buzzer.h"
+#include "display.h"
 #include <stdio.h>
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
@@ -51,6 +52,8 @@ void elevatorControllerInit(void){
     elevatorControllerClearFloorLed(2);
     elevatorControllerClearFloorLed(3);
     buzzerPlayFloorTone(s_current_floor); // 시작 층 알림음
+    ssd1306Init();
+    elevatorControllerUpdateDisplay();
 }
 
 // 엘리베이터 상태 반환
@@ -76,6 +79,8 @@ static void elevatorControllerStartStep(uint8_t target_floor)
         s_state = STATE_MOVING_DOWN;
         motorDown();
     }
+
+     elevatorControllerUpdateDisplay();
 }
 
 /*
@@ -114,6 +119,7 @@ void elevatorControllerUpdate(void){
 
                 if (s_current_floor == s_target_floor) {
                     s_state = STATE_ARRIVED;
+                    elevatorControllerUpdateDisplay();
                 } else {
                     elevatorControllerStartStep(s_target_floor);
                 }
@@ -141,6 +147,7 @@ void elevatorControllerUpdate(void){
 
                 if (s_current_floor == s_target_floor) {
                     s_state = STATE_ARRIVED;
+                     elevatorControllerUpdateDisplay();
                 } else {
                     elevatorControllerStartStep(s_target_floor);
                 }
@@ -163,6 +170,8 @@ void elevatorControllerUpdate(void){
         schedulerClearRequest(s_target_floor);
         s_dwell_start_tick = HAL_GetTick();
         s_state = STATE_DWELL;
+
+         elevatorControllerUpdateDisplay();
         break;
 
     case STATE_DWELL:
@@ -181,4 +190,11 @@ void elevatorControllerUpdate(void){
         s_state = STATE_IDLE;
         break;
     }
+}
+ void elevatorControllerUpdateDisplay(void)
+{
+    drawElevatorScreen(
+        s_current_floor,
+        s_state
+    );
 }
