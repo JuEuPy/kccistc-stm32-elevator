@@ -54,21 +54,7 @@ void appTestDoor(void)
 
     doorSetServoAngle(0);
     HAL_Delay(1000);
-}
-
-/*
- * 모터 축 엔코더 배선 확인용 수동 테스트.
- */
-void appTestFloorEncoder(void)
-{
-    floorEncoderInit();
-
-    while (1) {
-        printf("=====pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-        HAL_Delay(300);
-    }
-}
-
+} 
 // void appTestDisplay(void){
    
 //     // 디스플레이 초기화 확인
