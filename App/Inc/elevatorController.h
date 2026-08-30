@@ -10,6 +10,7 @@ typedef enum {
     STATE_MOVING_UP,    // 상승중
     STATE_MOVING_DOWN,  // 하강중
     STATE_ARRIVED,      // 층 도착
+    STATE_DWELL,        // 도착 후 다음 목표로 넘어가기 전 대기 (ARRIVAL_DWELL_MS)
     STATE_ERROR         // 잘못된 목표층, 모터/엔코더 타임아웃 등 이상 상황
 } ElevatorState_t;
 

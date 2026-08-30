@@ -13,9 +13,7 @@
 
 /*
  * =============================================== 버튼
- * 택트 스위치 3개 + 홀 센서 버튼 3개, 각각 1~3층에 매핑되고 로직은 완전히 동일함
- * (역할이 다른 게 아니라 버튼 종류만 다름). BTN_1/2/3(택트)는 main.h가 이미
- * 같은 이름으로 정의하고 있어서 여기서 재정의하면 안 됨(자기참조로 값이 깨짐).
+ * 내부 조작과 각 층 외부 호출 버튼을 역할별로 구분해서 사용
  */
 #define HALL_BTN_1_GPIO_Port  BTN_HALL_1_GPIO_Port
 #define HALL_BTN_1_Pin        BTN_HALL_1_Pin
@@ -24,7 +22,7 @@
 #define HALL_BTN_3_GPIO_Port  BTN_HALL_3_GPIO_Port
 #define HALL_BTN_3_Pin        BTN_HALL_3_Pin
 
-/* 카 버튼 + 홀 버튼 합친 총 개수 (button.c 배열 크기) */
+/* 택트 스위치 + 홀 센서 버튼 합친 총 개수 (button.c 배열 크기) */
 #define BTN_COUNT             (NUM_FLOORS * 2U)
 
 /* 층 호출 큐에 동시에 저장 가능한 최대 요청 수 */
@@ -39,7 +37,7 @@
  */
 
 // 정회전 (상승)
-#define MOTOR_IN1_GPIO_Port  GPIOB   
+#define MOTOR_IN1_GPIO_Port  GPIOB
 #define MOTOR_IN1_Pin        GPIO_PIN_0
 
 // 역회전 (하강)
@@ -52,35 +50,19 @@
  */
 #define MOTOR_PWM_TIM        htim4
 #define MOTOR_PWM_CHANNEL    TIM_CHANNEL_3
-#define MOTOR_PWM_ARR        999U   // Counter Period 
+#define MOTOR_PWM_ARR        999U   // Counter Period
 
-// 속도(%) 
+// 속도(%)
 #define MOTOR_SPEED_DEFAULT  60U
 #define MOTOR_SPEED_MIN      0U
 #define MOTOR_SPEED_MAX      100U
 
 /*
- * =============================================== 층 위치 감지. 
+ * =============================================== 층 위치 감지.
  * 구조물 총 높이 45cm / 3개 층 = 층당 15cm
  */
 #define STRUCTURE_HEIGHT_CM  45U
-#define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
-
-/*
- * TRIG: 출력, ECHO: 입력
- */
-#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
-#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
-#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
-#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
-
-/* 응답 타임아웃 */
-#define SENSOR_ECHO_START_TIMEOUT_US 5000U  
-#define SENSOR_ECHO_END_TIMEOUT_US   30000U 
-
-/* 벗어나면 측정 실패로 처리 */
-#define SENSOR_DISTANCE_MIN_CM       2U
-#define SENSOR_DISTANCE_MAX_CM       400U
+#define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)
 
 /*
  * 층 감지 방식 전환
@@ -90,19 +72,40 @@
 #define FLOOR_SENSE_ENCODER     1   //수정안함
 #define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
 
+#if FLOOR_SENSE_METHOD == FLOOR_SENSE_ULTRASONIC
 /*
- * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지. 
+ * TODO: 초음파 센서(SONIC_TRIG/ECHO). 나중에 확인 후 제거필요
+ */
+#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
+#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
+#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
+#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
+
+/* 응답 타임아웃 */
+#define SENSOR_ECHO_START_TIMEOUT_US 5000U
+#define SENSOR_ECHO_END_TIMEOUT_US   30000U
+
+/* 벗어나면 측정 실패로 처리 */
+#define SENSOR_DISTANCE_MIN_CM       2U
+#define SENSOR_DISTANCE_MAX_CM       400U
+#endif /* FLOOR_SENSE_ULTRASONIC */
+
+/*
+ * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
  */
 #define ENCODER_TIM          htim3
-#define FLOOR_15CM_PULSE     6000U 
+#define FLOOR_15CM_PULSE     6000U
 
 /* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
 #define ENCODER_PULSE_RESET_THRESHOLD  30000
 
+/* 한 층 도착 후 다음 목표로 넘어가기 전에 대기하는 시간(ms) */
+#define ARRIVAL_DWELL_MS      1500U
+
 /*
  * =============================================== 문 서보모터 1개 기준
- * 임시값. 
+ * 임시값.
  */
 #define DOOR_PWM_TIM         htim1
 #define DOOR_PWM_CHANNEL     TIM_CHANNEL_4
@@ -116,7 +119,7 @@
 #define DOOR_MOVE_TIME_MS    500U
 
 /*
- * =============================================== 층 위치 표시 LED 
+ * =============================================== 층 위치 표시 LED
  * 1층=빨강(PB6), 2층=노랑(PA7), 3층=초록(PA6)
  */
 #define FLOOR_LED_1_GPIO_Port LED_1_GPIO_Port
@@ -127,7 +130,7 @@
 #define FLOOR_LED_3_Pin       LED_3_Pin
 
 /*
- * =============================================== 부저 
+ * =============================================== 부저
  */
 #define BUZZER_PWM_TIM        htim11
 #define BUZZER_PWM_CHANNEL    TIM_CHANNEL_1
