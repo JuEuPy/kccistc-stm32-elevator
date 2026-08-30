@@ -29,17 +29,17 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 |:---|:---|:---|:---|:---|
 | IN3 (정회전) | PB0 | A3 | GPIO_Output | High/Low 방향 제어 |
 | IN4 (역회전) | PB1 | CN10 (Pin 24) | GPIO_Output | High/Low 방향 제어 |
-| ENA (속도 PWM) | PB8 | D15 | TIM4_CH3 (PWM) | 1kHz 속도 제어 |
+| ENB (속도 PWM) | PB8 | D15 | TIM4_CH3 (PWM) | 1kHz 속도 제어 |
 | A상 | PC6 | CN10(Pin 4) | TIM3_CH1 (Encoder Mode) | 방향 판별 |
 | B상 | PC7 | D9 | TIM3_CH2 (Encoder Mode) | 방향 판별 |
 
-
+// 미사용
 ## 서보 모터 (SG90 / MG996R 도어 제어)
 
 | 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
 | PWM | PA11 | D3 | TIM1_CH4 (PWM) | 50Hz (0°: 닫힘 / 90°: 열림) |
-
+//
 ## 상태 표시 LED & 시스템
 
 | 용도 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
