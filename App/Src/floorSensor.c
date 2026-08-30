@@ -3,6 +3,8 @@
 #include "floorSensor.h"
 #include "config.h"
 
+#if FLOOR_SENSE_METHOD == FLOOR_SENSE_ULTRASONIC
+
 static uint16_t s_distance_cm = 0;
 
 static void dwtInit(void){
@@ -82,5 +84,14 @@ uint8_t floorSensorGetCurrentFloor(void){
         }
     }
 
-    return FLOOR_MAX; 
+    return FLOOR_MAX;
 }
+
+#else /* FLOOR_SENSE_METHOD != FLOOR_SENSE_ULTRASONIC: 핀이 없어 빈 스텁으로만 컴파일 통과 */
+
+void floorSensorInit(void) {}
+bool floorSensorTrigger(void) { return false; }
+uint16_t floorSensorGetDistanceCm(void) { return 0; }
+uint8_t floorSensorGetCurrentFloor(void) { return FLOOR_MIN; }
+
+#endif /* FLOOR_SENSE_METHOD */

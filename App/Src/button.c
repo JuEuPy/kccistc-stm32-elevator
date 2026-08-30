@@ -17,11 +17,11 @@ typedef struct {
 } Button_t;
 
 static Button_t s_buttons[BTN_COUNT] = {
-    /* 내부 조작반: 목적지 층 선택 */
+    /* 택트 스위치 1~3층 */
     { BTN_1_GPIO_Port, BTN_1_Pin, 1U, 0U, false, false },
     { BTN_2_GPIO_Port, BTN_2_Pin, 2U, 0U, false, false },
     { BTN_3_GPIO_Port, BTN_3_Pin, 3U, 0U, false, false },
-    /* 홀 호출 버튼: 해당 층으로 엘리베이터 호출 */
+    /* 홀 센서 버튼 1~3층 (택트와 버튼 종류만 다를 뿐, 로직은 동일) */
     { HALL_BTN_1_GPIO_Port,  HALL_BTN_1_Pin,  1U, 0U, false, false },
     { HALL_BTN_2_GPIO_Port,  HALL_BTN_2_Pin,  2U, 0U, false, false },
     { HALL_BTN_3_GPIO_Port,  HALL_BTN_3_Pin,  3U, 0U, false, false },

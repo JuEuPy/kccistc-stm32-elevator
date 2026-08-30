@@ -20,4 +20,6 @@ void appTestFloorSensor(void);
 void appTestFloorEncoder(void);
 void appTestFloorEncoderCalibration(void);
 
+void appTestDisplay(void);
+
 #endif /* APP_INC_APPMAIN_H_ */
