@@ -141,8 +141,8 @@
 
 /* 계이름 주파수(Hz)*/
 #define BUZZER_NOTE_DO_HZ     262U
-#define BUZZER_NOTE_MI_HZ     330U
-#define BUZZER_NOTE_SOL_HZ    392U
+#define BUZZER_NOTE_MI_HZ     400U     //330U
+#define BUZZER_NOTE_SOL_HZ    492U     //392U
 #define BUZZER_NOTE_DURATION_MS 200U
 
 #endif /* APP_INC_CONFIG_H_ */

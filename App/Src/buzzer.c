@@ -11,7 +11,7 @@ void buzzerPlayTone(uint16_t frequency_hz, uint16_t duration_ms){
 
     arr = (BUZZER_TIM_CLOCK_HZ / frequency_hz) - 1U;
     __HAL_TIM_SET_AUTORELOAD(&BUZZER_PWM_TIM, arr);         //음높이 결정
-    __HAL_TIM_SET_COMPARE(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL, arr / 10U);
+    __HAL_TIM_SET_COMPARE(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL, arr / 3U);
     HAL_TIM_GenerateEvent(&BUZZER_PWM_TIM, TIM_EVENTSOURCE_UPDATE);
 
     HAL_TIM_PWM_Start(&BUZZER_PWM_TIM, BUZZER_PWM_CHANNEL); //출력
