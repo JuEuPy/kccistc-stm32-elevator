@@ -15,13 +15,6 @@
  * =============================================== 버튼
  * 내부 조작과 각 층 외부 호출 버튼을 역할별로 구분해서 사용
  */
-#define BTN_1_GPIO_Port BTN_1_GPIO_Port
-#define BTN_1_Pin       BTN_1_Pin
-#define BTN_2_GPIO_Port BTN_2_GPIO_Port
-#define BTN_2_Pin       BTN_2_Pin
-#define BTN_3_GPIO_Port BTN_3_GPIO_Port
-#define BTN_3_Pin       BTN_3_Pin
-
 #define HALL_BTN_1_GPIO_Port  BTN_HALL_1_GPIO_Port
 #define HALL_BTN_1_Pin        BTN_HALL_1_Pin
 #define HALL_BTN_2_GPIO_Port  BTN_HALL_2_GPIO_Port
@@ -29,7 +22,7 @@
 #define HALL_BTN_3_GPIO_Port  BTN_HALL_3_GPIO_Port
 #define HALL_BTN_3_Pin        BTN_HALL_3_Pin
 
-/* 카 버튼 + 홀 버튼 합친 총 개수 (button.c 배열 크기) */
+/* 택트 스위치 + 홀 센서 버튼 합친 총 개수 (button.c 배열 크기) */
 #define BTN_COUNT             (NUM_FLOORS * 2U)
 
 /* 층 호출 큐에 동시에 저장 가능한 최대 요청 수 */
@@ -72,7 +65,16 @@
 #define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)
 
 /*
- * TRIG: 출력, ECHO: 입력
+ * 층 감지 방식 전환
+ * elevatorController.c가 이 값을 보고 floorSensor(초음파) / encoder(모터 축 엔코더) 중 하나만 쓴다.
+ */
+#define FLOOR_SENSE_ULTRASONIC  0   //수정안함
+#define FLOOR_SENSE_ENCODER     1   //수정안함
+#define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
+
+#if FLOOR_SENSE_METHOD == FLOOR_SENSE_ULTRASONIC
+/*
+ * TODO: 초음파 센서(SONIC_TRIG/ECHO). 나중에 확인 후 제거필요
  */
 #define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
 #define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
@@ -86,14 +88,7 @@
 /* 벗어나면 측정 실패로 처리 */
 #define SENSOR_DISTANCE_MIN_CM       2U
 #define SENSOR_DISTANCE_MAX_CM       400U
-
-/*
- * 층 감지 방식 전환
- * elevatorController.c가 이 값을 보고 floorSensor(초음파) / encoder(모터 축 엔코더) 중 하나만 쓴다.
- */
-#define FLOOR_SENSE_ULTRASONIC  0   //수정안함
-#define FLOOR_SENSE_ENCODER     1   //수정안함
-#define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
+#endif /* FLOOR_SENSE_ULTRASONIC */
 
 /*
  * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
