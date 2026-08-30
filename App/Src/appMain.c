@@ -24,36 +24,11 @@ void appInit(void){
 }
 
 /*
- * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼을 읽어 목표 층으로 이동.
- * buttonScan()은 디바운싱된 눌림을 schedulerAddRequest()로 기록해둔다(나중의 큐 처리를 위함).
+ * 버튼(BTN_1/2/3)과 홀센서 버튼(BTN_HALL_1/2/3) 모두 같은 요청 큐에 등록된다.
  */
 void appRun(void){
     buttonScan();
-
-    uint8_t target_floor = 0;
-
-    if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
-        target_floor = 1;
-    } else if (HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET) {
-        target_floor = 2;
-    } else if (HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-        target_floor = 3;
-    }
-
-    if (target_floor == 0) {
-        return;
-    }
-
-    if (elevatorControllerMoveToFloor(target_floor)) {
-        printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
-    } else {
-        printf("MOVE TIMEOUT! stuck near floor %u (target %u)\r\n", elevatorControllerGetFloor(), target_floor);
-    }
-
-    /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
-    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET 
-        || HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-    }
+    elevatorControllerUpdate();
 }
 
 /*
@@ -87,14 +62,14 @@ void appTestDoor(void)
     doorSetServoAngle(0);
     HAL_Delay(1000);
 
-    doorSetServoAngle(90);
-    HAL_Delay(1000);
+    // doorSetServoAngle(90);
+    // HAL_Delay(1000);
 
     doorSetServoAngle(180);
     HAL_Delay(1000);
 
-    doorSetServoAngle(90);
-    HAL_Delay(1000);
+    // doorSetServoAngle(90);
+    // HAL_Delay(1000);
 
     doorSetServoAngle(0);
     HAL_Delay(1000);

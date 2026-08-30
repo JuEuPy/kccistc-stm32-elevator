@@ -13,13 +13,14 @@ aa
 | 2층 | PC1 / A4 | GPIO_INPUT(PULL UP) | 버튼 누름 시 Low
 | 3층 | PC2 / CN7(Pin 35) | GPIO_INPUT(PULL UP) | 버튼 누름 시 Low
 
-## 층 위치 감지 센서(HC-SR04)
+### 각 층 승강장 호출 버튼 
 
-| 신호 | GPIO 포트/핀 | EXTI 라인 | 비고 |
+| 호출 구분 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
-| Trig | PA0 / A0 | GPIO_OUPUT | 10 us 펄스 발신 |
-| Echo | PA1 / A1 | GPIO_INPUT |  펄스 폭 측정 (거리 계산) | 
-
+| 1층 호출 (상향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 2층 호출 (하향) | PA2 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 3층 호출 (하향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+## 모터 드라이버 (L298N & SE-DM185)
 
 ## 모터 드라이버(L298N & SE-DM185)
 
@@ -50,12 +51,31 @@ Counter Period (ARR): 2000 - 1
 
 | 용도 | GPIO 포트/핀 | 비고 |
 |:---|:---|:---|:---|:---|
-| 1층 LED(빨강) | PB6 / D10 | GPIO_OUTPUT | 디버깅용
-| 2층 LED(노랑) | PA7 / D11 | GPIO_OUTPUT | 디버깅용
-| 3층 LED(초록) | PA6 / D12 | GPIO_OUTPUT | 디버깅용
+| PWM | PA11 | D3 | TIM1_CH4 (PWM) | 50Hz (0°: 닫힘 / 90°: 열림) |
 
 
+| 용도 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+|:---|:---|:---|:---|:---|
+| 1층 LED (초록) | PB6 | D10 | GPIO_Output | 1층 위치/호출 표시 |
+| 2층 LED (초록) | PA7 | D11 | GPIO_Output | 2층 위치/호출 표시 |
+| 3층 LED (초록) | PA6 | D12 | GPIO_Output | 3층 위치/호출 표시 |
+| 도착 알림 부저 | PB9 | D14 | TIM11_CH1 | 수동 부저(KY-006) 층별 도착음(도/미/솔) | 
 
+## 내부 디스플레이
+| 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+|:---|:---|:---|:---|:---|
+| I2C3 | PB4 | D5 |  I2C3_SDA | 현재 층 표시용 디스플레이 |
+| I2C3 | PA8 | D7 | I2C3_SCL |  |
+
+
+## 타이머 파라미터 (CubeMX 기준 / 클럭 100MHz)
+
+| 타이머 | 제어 대상 | 목표 주파수 | Prescaler (PSC) | Counter Period (ARR) | 출력 핀 |
+|:---|:---|:---|:---|:---|:---|
+| **TIM4** | DC 모터 속도 | 1kHz | `100 - 1` (99) | `1000 - 1` (999) | PB8 (CH3) |
+| **TIM1** | 서보 모터 각도 | 50Hz | `1000 - 1` (999) | `2000 - 1` (1999) | PA11 (CH4) |
+
+---
 
 # 시스템 아키텍처
 

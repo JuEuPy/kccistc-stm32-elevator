@@ -16,6 +16,6 @@ void doorSetServoAngle(float angle){
         angle = 180.0f;
     }
 
-    pulse = 50U + (uint32_t)((angle * 200.0f) / 180.0f);
+    pulse = 55U + (uint32_t)((angle * 200.0f) / 180.0f);
     __HAL_TIM_SET_COMPARE(&DOOR_PWM_TIM, DOOR_PWM_CHANNEL, pulse);
 }
