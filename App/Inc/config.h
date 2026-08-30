@@ -12,16 +12,11 @@
 #define BUTTON_DEBOUNCE_MS  20U
 
 /*
- * =============================================== 버튼 
- * 내부 조작과 각 층 외부 호출 버튼을 역할별로 구분해서 사용
+ * =============================================== 버튼
+ * 택트 스위치 3개 + 홀 센서 버튼 3개, 각각 1~3층에 매핑되고 로직은 완전히 동일함
+ * (역할이 다른 게 아니라 버튼 종류만 다름). BTN_1/2/3(택트)는 main.h가 이미
+ * 같은 이름으로 정의하고 있어서 여기서 재정의하면 안 됨(자기참조로 값이 깨짐).
  */
-#define BTN_1_GPIO_Port BTN_1_GPIO_Port
-#define BTN_1_Pin       BTN_1_Pin
-#define BTN_2_GPIO_Port BTN_2_GPIO_Port
-#define BTN_2_Pin       BTN_2_Pin
-#define BTN_3_GPIO_Port BTN_3_GPIO_Port
-#define BTN_3_Pin       BTN_3_Pin
-
 #define HALL_BTN_1_GPIO_Port  BTN_HALL_1_GPIO_Port
 #define HALL_BTN_1_Pin        BTN_HALL_1_Pin
 #define HALL_BTN_2_GPIO_Port  BTN_HALL_2_GPIO_Port
