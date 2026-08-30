@@ -13,8 +13,9 @@
 #include <stdio.h>
 #include "display.h"
 
+// Teleplot 통신용
 int __io_putchar(int ch){
-    HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
     return ch;
 }
 
@@ -28,7 +29,7 @@ void appInit(void){
 }
 
 /*
- * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼 
+ * 버튼(BTN_1/2/3)과 홀센서 버튼(BTN_HALL_1/2/3) 모두 같은 요청 큐에 등록된다.
  */
 void appRun(void){
    // buttonScan();
@@ -58,7 +59,7 @@ void appTestMotor(void)
 
 
 /*
- * 서보 도어 배선/각도 확인용 수동 테스트. 0 -> 90 -> 180 -> 90 -> 0도 순으로 움직여본다.
+ * 서보 도어 배선/각도 확인용 수동 테스트. 0 -> 180 -> 0도 순으로 움직여본다.
  */
 void appTestDoor(void)
 {
@@ -67,14 +68,8 @@ void appTestDoor(void)
     doorSetServoAngle(0);
     HAL_Delay(1000);
 
-    // doorSetServoAngle(90);
-    // HAL_Delay(1000);
-
     doorSetServoAngle(180);
     HAL_Delay(1000);
-
-    // doorSetServoAngle(90);
-    // HAL_Delay(1000);
 
     doorSetServoAngle(0);
     HAL_Delay(1000);
