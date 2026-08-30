@@ -94,7 +94,7 @@
  * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
  */
 #define ENCODER_TIM          htim3
-#define FLOOR_15CM_PULSE     3900U
+#define FLOOR_15CM_PULSE     3600U
 
 /* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
