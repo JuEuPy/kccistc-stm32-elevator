@@ -5,6 +5,7 @@
 #include "floorEncoder.h"
 #include "buzzer.h"
 #include "display.h"
+#include "door.h"
 #include <stdio.h>
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
@@ -46,6 +47,7 @@ static void elevatorControllerClearFloorLed(uint8_t floor){
 void elevatorControllerInit(void){
     floorEncoderInit();
     motorInit();
+    doorInit();
     // buzzerInit();
     s_state = STATE_IDLE;
     elevatorControllerClearFloorLed(1);
@@ -88,7 +90,8 @@ static void elevatorControllerStartStep(uint8_t target_floor)
  * 논블로킹 상태 머신. appRun()에서 매 tick마다 호출된다.
  */
 void elevatorControllerUpdate(void){
-    
+    doorUpdate();
+
     switch (s_state) {
     case STATE_IDLE:
         if (!schedulerHasPendingRequests()) {
@@ -168,6 +171,7 @@ void elevatorControllerUpdate(void){
         printf("arrived at floor %u\r\n", s_current_floor);
 
         schedulerClearRequest(s_target_floor);
+        doorOpen();
         s_dwell_start_tick = HAL_GetTick();
         s_state = STATE_DWELL;
 
@@ -175,7 +179,8 @@ void elevatorControllerUpdate(void){
         break;
 
     case STATE_DWELL:
-        if ((HAL_GetTick() - s_dwell_start_tick) >= ARRIVAL_DWELL_MS) {
+        /* 도어가 완전히 닫히고, 도착 후 대기시간(ARRIVAL_DWELL_MS)도 지나야 다음 목표로 넘어간다 */
+        if ((doorGetState() == DOOR_CLOSED) && ((HAL_GetTick() - s_dwell_start_tick) >= ARRIVAL_DWELL_MS)) {
             s_state = STATE_IDLE;
         }
         break;
