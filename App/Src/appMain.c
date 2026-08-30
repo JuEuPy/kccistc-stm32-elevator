@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
+#include "display.h"
 
 // Teleplot 통신용
 int __io_putchar(int ch){
@@ -22,14 +23,18 @@ void appInit(void){
     buttonInit();
     schedulerInit();
     elevatorControllerInit();
+        ssd1306Init();
+
+    
 }
 
 /*
  * 버튼(BTN_1/2/3)과 홀센서 버튼(BTN_HALL_1/2/3) 모두 같은 요청 큐에 등록된다.
  */
 void appRun(void){
-    buttonScan();
-    elevatorControllerUpdate();
+   // buttonScan();
+    //elevatorControllerUpdate();
+    appTestDisplay();
 }
 
 /*
@@ -38,7 +43,7 @@ void appRun(void){
  */
 void appTestMotor(void)
 {
-    motorInit();
+   // motorInit();
 
     // motoDown();
     // HAL_Delay(1000);
@@ -46,10 +51,10 @@ void appTestMotor(void)
     // motorStop();
     // HAL_Delay(500);
 
-     motorDown();
-     HAL_Delay(1000);
+   //  motorDown();
+   //  HAL_Delay(1000);
 
-    motorStop();
+   // motorStop();
 }
 
 
@@ -83,3 +88,20 @@ void appTestFloorEncoder(void)
     }
 }
 
+void appTestDisplay(void){
+   
+    // 디스플레이 초기화 확인
+    if (!ssd1306Init()) {
+        // 초기화 실패 시 처리 (필요한 경우 에러 LED 점등 등)
+        return;
+    }
+
+    // --- 3층 정지 화면 호출 ---
+    int currentFloor = 3;
+    drawElevatorScreen(currentFloor, ELEVATOR_IDLE);
+    
+    // 화면이 꺼지지 않도록 유지 (테스트용)
+    while (1) {
+        // 필요에 따라 층수나 상태를 변경하는 로직 추가 가능
+    }
+}
