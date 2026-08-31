@@ -23,6 +23,11 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 * **층간 이동 스케줄러:** 요청 순차 처리
 * **엔코더 위치 제어:** 타이머 하드웨어 쿼드러쳐 디코딩(Encoder Mode, 4채배)
 * **시스템 제어:** 유한 상태 머신(FSM) 기반 엘리베이터 상태 전이
+
+
+
+<img width="1453" height="733" alt="승강기 배선도" src="https://github.com/user-attachments/assets/dab4ccaf-8d44-42e0-b969-ffda662951c6" />
+
  
 ---
 
