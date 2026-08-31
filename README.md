@@ -4,23 +4,27 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 
 ---
 
+## 기술 스택
 
-## Tech Stack
+### Firmware & Development
+<p>
+  <img src="https://img.shields.io/badge/C-A8B9CC?style=for-the-badge&logo=c&logoColor=white" alt="C" />
+  <img src="https://img.shields.io/badge/STM32-03234B?style=for-the-badge&logo=stmicroelectronics&logoColor=white" alt="STM32" />
+  <img src="https://img.shields.io/badge/STM32CubeIDE-00205B?style=for-the-badge&logo=stmicroelectronics&logoColor=white" alt="STM32CubeIDE" />
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" alt="Git" />
+</p>
 
-### Hardware & MCU
-- **MCU / Board:** STMicroelectronics STM32 (Nucleo Board)
-- **Actuator & Driver:** 130 DC Motor, H-Bridge Motor Driver
-- **Sensors & Input/Output:** Quadrature Rotary Encoder, Push Buttons, Status LEDs, Passive Buzzer
+### 하드웨어 & 제어 부품
+* **MCU 보드:** STMicroelectronics STM32 Nucleo 보드
+* **구동부 & 드라이버:** 130 DC 모터, H-Bridge 모터 드라이버
+* **센서 및 입출력:** 쿼드러쳐 로터리 엔코더 (광학/홀 센서), 푸시 버튼, 상태 표시 LED, 부저
 
-### Firmware & Software
-- **Language:** C (C99)
-- **Framework & Libraries:** STM32 HAL Driver, CMSIS
-- **Development Tools:** STM32CubeIDE, STM32CubeMX
-- **Architecture & Patterns:** 
-  - Non-blocking Tick-based Task Scheduling
-  - Circular FIFO Queue (Elevator Floor Scheduling)
-  - Finite State Machine (FSM)
-  - Hardware Quadrature Decoding (Timer Encoder Mode)
+### 소프트웨어 설계 및 주요 기술
+* **언어 & 프레임워크:** C언어 (C99), STM32 HAL 드라이버
+* **논블로킹 스케줄링:** `HAL_GetTick()` 기반 주기적 틱(Tick) 스캔 및 디바운싱
+* **층간 이동 스케줄러:** 요청 순차 처리
+* **엔코더 위치 제어:** 타이머 하드웨어 쿼드러쳐 디코딩(Encoder Mode, 4채배)
+* **시스템 제어:** 유한 상태 머신(FSM) 기반 엘리베이터 상태 전이
  
 ---
 
