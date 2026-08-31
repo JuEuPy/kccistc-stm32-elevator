@@ -11,20 +11,38 @@
 /* 버튼 디바운싱 시간 (ms) */
 #define BUTTON_DEBOUNCE_MS  20U
 
+/*
+ * =============================================== 버튼
+ * 내부 조작과 각 층 외부 호출 버튼을 역할별로 구분해서 사용
+ */
+#define HALL_BTN_1_GPIO_Port  BTN_HALL_1_GPIO_Port
+#define HALL_BTN_1_Pin        BTN_HALL_1_Pin
+#define HALL_BTN_2_GPIO_Port  BTN_HALL_2_GPIO_Port
+#define HALL_BTN_2_Pin        BTN_HALL_2_Pin
+#define HALL_BTN_3_GPIO_Port  BTN_HALL_3_GPIO_Port
+#define HALL_BTN_3_Pin        BTN_HALL_3_Pin
+
+/* 택트 스위치 + 홀 센서 버튼 합친 총 개수 (button.c 배열 크기) */
+#define BTN_COUNT             (NUM_FLOORS * 2U)
+
+/* 층 호출 큐에 동시에 저장 가능한 최대 요청 수 */
+#define SCHEDULER_QUEUE_CAPACITY 2U
+
 /* 버튼/센서 스캔 주기 (ms), appRun()에서 SysTick 기반으로 사용 */
 #define APP_TICK_MS         1U
 
 /*
- * 모터 드라이버 (CubeMX 확정: MOT_IN3/IN4, main.h 참고)
+ * 모터 드라이버
+ * TODO: 하드웨어 핀 배치 확정 전까지의 임시값. 확정되면 이 값들 갱신할 것
  */
 
 // 정회전 (상승)
-#define MOTOR_IN1_GPIO_Port  MOT_IN3_GPIO_Port
-#define MOTOR_IN1_Pin        MOT_IN3_Pin
+#define MOTOR_IN1_GPIO_Port  GPIOB
+#define MOTOR_IN1_Pin        GPIO_PIN_0
 
 // 역회전 (하강)
-#define MOTOR_IN2_GPIO_Port  MOT_IN4_GPIO_Port
-#define MOTOR_IN2_Pin        MOT_IN4_Pin
+#define MOTOR_IN2_GPIO_Port  GPIOB   /* 역회전(하강) 방향 제어 */
+#define MOTOR_IN2_Pin        GPIO_PIN_1
 
 /*
  * 구동 인가 (pwm 으로 속도 제어)
@@ -32,35 +50,19 @@
  */
 #define MOTOR_PWM_TIM        htim4
 #define MOTOR_PWM_CHANNEL    TIM_CHANNEL_3
-#define MOTOR_PWM_ARR        999U   // Counter Period 
+#define MOTOR_PWM_ARR        999U   // Counter Period
 
-/* 속도(%) 기본값/범위: 나중에 실측 후 조정 */
-#define MOTOR_SPEED_DEFAULT  75U
-#define MOTOR_SPEED_MIN      75U
+// 속도(%)
+#define MOTOR_SPEED_DEFAULT  60U
+#define MOTOR_SPEED_MIN      0U
 #define MOTOR_SPEED_MAX      100U
 
 /*
- * 층 위치 감지. 
+ * =============================================== 층 위치 감지.
  * 구조물 총 높이 45cm / 3개 층 = 층당 15cm
  */
 #define STRUCTURE_HEIGHT_CM  45U
-#define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)  
-
-/*
- * TRIG: 출력, ECHO: 입력 (CubeMX 확정: SONIC_TRIG/ECHO, main.h 참고)
- */
-#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
-#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
-#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
-#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
-
-/* 응답 타임아웃 */
-#define SENSOR_ECHO_START_TIMEOUT_US 5000U  
-#define SENSOR_ECHO_END_TIMEOUT_US   30000U 
-
-/* 벗어나면 측정 실패로 처리 */
-#define SENSOR_DISTANCE_MIN_CM       2U
-#define SENSOR_DISTANCE_MAX_CM       400U
+#define FLOOR_HEIGHT_CM      (STRUCTURE_HEIGHT_CM / NUM_FLOORS)
 
 /*
  * 층 감지 방식 전환
@@ -70,20 +72,77 @@
 #define FLOOR_SENSE_ENCODER     1   //수정안함
 #define FLOOR_SENSE_METHOD      FLOOR_SENSE_ENCODER //필요시 수정
 
+#if FLOOR_SENSE_METHOD == FLOOR_SENSE_ULTRASONIC
 /*
- * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지. 
+ * TODO: 초음파 센서(SONIC_TRIG/ECHO). 나중에 확인 후 제거필요
+ */
+#define SENSOR_TRIG_GPIO_Port SONIC_TRIG_GPIO_Port
+#define SENSOR_TRIG_Pin       SONIC_TRIG_Pin
+#define SENSOR_ECHO_GPIO_Port SONIC_ECHO_GPIO_Port
+#define SENSOR_ECHO_Pin       SONIC_ECHO_Pin
+
+/* 응답 타임아웃 */
+#define SENSOR_ECHO_START_TIMEOUT_US 5000U
+#define SENSOR_ECHO_END_TIMEOUT_US   30000U
+
+/* 벗어나면 측정 실패로 처리 */
+#define SENSOR_DISTANCE_MIN_CM       2U
+#define SENSOR_DISTANCE_MAX_CM       400U
+#endif /* FLOOR_SENSE_ULTRASONIC */
+
+/*
+ * 모터(SE-DM185) 축 내장 엔코더 기반 층 감지.
  */
 #define ENCODER_TIM          htim3
-#define FLOOR_15CM_PULSE     10000U // 임시값
+#define FLOOR_15CM_PULSE     3600U
 
 /* 한 층 이동 중 이 시간(ms) 안에 도착 펄스가 안 쌓이면 모터/엔코더 이상으로 보고 중단 */
 #define MOTOR_MOVE_TIMEOUT_MS 5000U
+#define ENCODER_PULSE_RESET_THRESHOLD  30000
+
+/* 한 층 도착 후 다음 목표로 넘어가기 전에 대기하는 시간(ms) */
+#define ARRIVAL_DWELL_MS      1500U
+
+/* 문이 열린 채로 유지되는 시간(ms). 지나면 자동으로 닫힘 */
+#define DOOR_OPEN_HOLD_MS     1500U
 
 /*
- * 엔코더 카운터가 이 값을 넘으면(절대값 기준) 0으로 재설정한다.
- * TIM3는 16비트라 32767을 넘으면 음수로 언더플로우(wraparound)하므로 그 전에 리셋.
- * NUM_FLOORS=3 기준 최대 이동거리(2 * FLOOR_15CM_PULSE)보다 넉넉히 커야 함.
+ * =============================================== 문 서보모터 1개 기준
+ * 임시값.
  */
-#define ENCODER_PULSE_RESET_THRESHOLD  30000
+#define DOOR_PWM_TIM         htim1
+#define DOOR_PWM_CHANNEL     TIM_CHANNEL_4
+#define DOOR_PWM_ARR         1999U   // Counter Period
+
+/* 닫힘/열림 위치에 대응하는 서보 펄스폭(CCR). 임시값(1.0ms/1.5ms 부근) */
+#define DOOR_CLOSED_CCR      100U
+#define DOOR_OPEN_CCR        150U
+
+/* 문이 열리고/닫히는 데 걸리는 대략적 시간(ms). 실측 후 조정 */
+#define DOOR_MOVE_TIME_MS    500U
+
+/*
+ * =============================================== 층 위치 표시 LED
+ * 1층=빨강(PB6), 2층=노랑(PA7), 3층=초록(PA6)
+ */
+#define FLOOR_LED_1_GPIO_Port LED_1_GPIO_Port
+#define FLOOR_LED_1_Pin       LED_1_Pin
+#define FLOOR_LED_2_GPIO_Port LED_2_GPIO_Port
+#define FLOOR_LED_2_Pin       LED_2_Pin
+#define FLOOR_LED_3_GPIO_Port LED_3_GPIO_Port
+#define FLOOR_LED_3_Pin       LED_3_Pin
+
+/*
+ * =============================================== 부저
+ */
+#define BUZZER_PWM_TIM        htim11
+#define BUZZER_PWM_CHANNEL    TIM_CHANNEL_1
+#define BUZZER_TIM_CLOCK_HZ   1000000U
+
+/* 계이름 주파수(Hz)*/
+#define BUZZER_NOTE_DO_HZ     262U
+#define BUZZER_NOTE_MI_HZ     400U     //330U
+#define BUZZER_NOTE_SOL_HZ    492U     //392U
+#define BUZZER_NOTE_DURATION_MS 200U
 
 #endif /* APP_INC_CONFIG_H_ */

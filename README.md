@@ -20,9 +20,9 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 
 | 호출 구분 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
 |:---|:---|:---|:---|:---|
-| 1층 호출 (상향) | PA0 | A0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 2층 호출 (하향) | PA1 | A1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
-| 3층 호출 (하향) | PA4 | A2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 1층 호출 (상향) | PA3 | D0 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 2층 호출 (하향) | PA2 | D1 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
+| 3층 호출 (하향) | PA10 | D2 | GPIO_Input (Pull-up) | 버튼 누름 시 Low (Active-Low) |
 ## 모터 드라이버 (L298N & SE-DM185)
 
 | 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
@@ -33,6 +33,12 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 | A상 | PC6 | CN10(Pin 4) | TIM3_CH1 (Encoder Mode) | 방향 판별 |
 | B상 | PC7 | D9 | TIM3_CH2 (Encoder Mode) | 방향 판별 |
 
+
+## 서보 모터 (SG90 / MG996R 도어 제어)
+
+| 신호 | GPIO 포트/핀 | 아두이노/헤더 핀 | 모드 | 비고 |
+|:---|:---|:---|:---|:---|
+| PWM | PA11 | D3 | TIM1_CH4 (PWM) | 50Hz (0°: 닫힘 / 90°: 열림) |
 
 ## 상태 표시 LED & 시스템
 
@@ -68,27 +74,33 @@ STM32 기반 3층 엘리베이터 미니프로젝트.
 
 ```
 kccistc-stm32-elevator/
-├── Core/                   # STM32CubeMX 생성 코드 (main.c, HAL 초기화 등)
+├── Core/                         # STM32CubeMX 생성 코드 (main.c, HAL 초기화 등)
 │   ├── Inc/
 │   └── Src/
-├── Drivers/                # STM32CubeMX 생성 HAL/CMSIS 드라이버
-├── App/                    # 엘리베이터 애플리케이션 로직 
+├── Drivers/                      # STM32CubeMX 생성 HAL/CMSIS 드라이버
+├── cmake/                        # STM32CubeMX 생성 CMake 빌드 설정
+├── App/                          # 엘리베이터 애플리케이션 로직
 │   ├── Inc/
-│   │   ├── config.h        # 핀 매핑, 층수 등 공통 상수
-│   │   ├── button.h        # 층 호출 버튼 입력/디바운싱
-│   │   ├── scheduler.h     # 목표 층 큐, 방향 결정
-│   │   ├── motor.h         # 모터 구동 제어
-│   │   ├── floor_sensor.h  # 층 위치 감지 센서
-│   │   ├── elevatorController.h  # 엘리베이터 상태/이동 제어
-│   │   └── app_main.h      # 애플리케이션 진입점
+│   │   ├── config.h              # 핀 매핑, 층수 등 공통 상수
+│   │   ├── appMain.h             # 애플리케이션 진입점 
+│   │   ├── button.h              # 층 호출 버튼 입력/디바운싱
+│   │   ├── scheduler.h           # 목표 층 큐, 다음 목표 층 결정
+│   │   ├── motor.h               # 모터 구동 제어
+│   │   ├── door.h                # 서보 도어 개폐 제어
+│   │   ├── buzzer.h              # 층 도착 알림음
+│   │   ├── floorSensor.h         # 초음파 센서 기반 층 위치 감지
+│   │   ├── floorEncoder.h        # 모터축 엔코더 기반 층 위치 감지
+│   │   └── elevatorController.h  # 엘리베이터 상태 머신
 │   └── Src/
+│       ├── appMain.c
 │       ├── button.c
 │       ├── scheduler.c
 │       ├── motor.c
-│       ├── floor_sensor.c
-│       ├── elevatorController.c
-│       └── app_main.c
-├── CONTRIBUTING.md
+│       ├── door.c
+│       ├── buzzer.c
+│       ├── floorSensor.c
+│       ├── floorEncoder.c
+│       └── elevatorController.c
 └── README.md
 ```
 
@@ -101,6 +113,9 @@ kccistc-stm32-elevator/
 | Button | `button.c/h` | 1~3층 호출 버튼 입력을 주기적으로 스캔하고 디바운싱 처리, 확정된 입력을 Scheduler에 등록 |
 | Scheduler | `scheduler.c/h` | 등록된 목표 층 큐 관리, 현재 층과 비교해 다음 목표 층 및 이동 방향 결정 |
 | Motor | `motor.c/h` | 모터 드라이버를 통해 12V 모터 정회전(상승)/역회전(하강)/정지 제어 |
-| Floor Sensor | `floor_sensor.c/h` | 각 층 위치 감지 센서(리드스위치+자석 또는 포토인터럽터) 인터럽트를 받아 현재 층 갱신 |
-| Elevator Controller | `elevatorController.c/h` | IDLE / MOVING_UP / MOVING_DOWN / ARRIVED 상태 전이를 관리하며 Scheduler/Motor/Floor Sensor를 조합해 순차 제어 |
-| App Main | `app_main.c/h` | 각 모듈 초기화 및 메인 루프(폴링) 구성, `main.c`에서 호출 |
+| Door | `door.c/h` | 서보 모터(SG90/MG996R) 각도를 제어해 도어 개폐 |
+| Buzzer | `buzzer.c/h` | 층 도착 시 층별 음계(1층=도, 2층=미, 3층=솔) 알림음 재생 |
+| Floor Sensor | `floorSensor.c/h` | 초음파 센서(HC-SR04)로 거리를 측정해 현재 층 판단 |
+| Floor Encoder | `floorEncoder.c/h` | 모터축 엔코더 누적 펄스 수로 현재 층 판단 |
+| Elevator Controller | `elevatorController.c/h` | IDLE / MOVING_UP / MOVING_DOWN / ARRIVED / ERROR 상태 전이를 관리하며 Scheduler/Motor/Floor 센서를 조합해 순차 제어 |
+| App Main | 각 모듈 초기화 및 메인 루프(폴링) 구성, `main.c`에서 호출 |

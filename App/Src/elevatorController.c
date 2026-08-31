@@ -3,71 +3,203 @@
 #include "motor.h"
 #include "config.h"
 #include "floorEncoder.h"
+#include "buzzer.h"
+#include "display.h"
+#include "door.h"
+#include <stdio.h>
 
 #define elevatorControllerGetCurrentFloor() floorEncoderGetCurrentFloor()
 
 static ElevatorState_t s_state;
-static uint8_t s_current_floor = FLOOR_MIN; /* 현재 층 위치, 기본값 1층에서 시작 */
+static uint8_t s_current_floor = FLOOR_MIN;   /* 현재 층 위치, 기본값 1층에서 시작 */
+static uint8_t s_target_floor;                /* 지금 향하고 있는 목표 층 */
+static int32_t s_step_start_pulse;            /* 현재 한 층 스텝을 시작한 시점의 펄스값 */
+static uint32_t s_step_start_tick;            /* 현재 한 층 스텝을 시작한 시점의 tick */
+static uint32_t s_dwell_start_tick;           /* STATE_DWELL 진입 시각 */
+
+void elevatorControllerLightFloorLed(uint8_t floor){
+    switch (floor) {
+        case 1: HAL_GPIO_WritePin(FLOOR_LED_1_GPIO_Port, FLOOR_LED_1_Pin, GPIO_PIN_SET); 
+            break;
+        case 2: HAL_GPIO_WritePin(FLOOR_LED_2_GPIO_Port, FLOOR_LED_2_Pin, GPIO_PIN_SET); 
+            break;
+        case 3: HAL_GPIO_WritePin(FLOOR_LED_3_GPIO_Port, FLOOR_LED_3_Pin, GPIO_PIN_SET); 
+            break;
+        default: 
+            break;
+    }
+}
+
+/* elevatorControllerLightFloorLed()와 대칭: 그 층 LED만 끈다 */
+static void elevatorControllerClearFloorLed(uint8_t floor){
+    switch (floor) {
+        case 1: HAL_GPIO_WritePin(FLOOR_LED_1_GPIO_Port, FLOOR_LED_1_Pin, GPIO_PIN_RESET); 
+            break;
+        case 2: HAL_GPIO_WritePin(FLOOR_LED_2_GPIO_Port, FLOOR_LED_2_Pin, GPIO_PIN_RESET); 
+            break;
+        case 3: HAL_GPIO_WritePin(FLOOR_LED_3_GPIO_Port, FLOOR_LED_3_Pin, GPIO_PIN_RESET); 
+            break;
+        default: 
+            break;
+    }
+}
 
 void elevatorControllerInit(void){
     floorEncoderInit();
     motorInit();
+    doorInit();
+    // buzzerInit();
+    s_state = STATE_IDLE;
+    elevatorControllerClearFloorLed(1);
+    elevatorControllerClearFloorLed(2);
+    elevatorControllerClearFloorLed(3);
+    buzzerPlayFloorTone(s_current_floor); // 시작 층 알림음
+    ssd1306Init();
+    elevatorControllerUpdateDisplay();
 }
 
-void elevatorControllerUpdate(void){
-    /* TODO */
-}
-
+// 엘리베이터 상태 반환
 ElevatorState_t elevatorControllerGetState(void){
     return s_state;
 }
 
+// 층 반환
 uint8_t elevatorControllerGetFloor(void){
     return s_current_floor;
 }
 
-bool elevatorControllerMoveToFloor(uint8_t target_floor){
-    if (target_floor < FLOOR_MIN || target_floor > FLOOR_MAX) {
-        s_state = STATE_ERROR;
-        return false;
-    }
+/* target_floor 방향으로 한 스텝(한 층) 이동을 시작한다 */
+static void elevatorControllerStartStep(uint8_t target_floor)
+{
+    s_step_start_pulse = floorEncoderGetPulseCount();
+    s_step_start_tick = HAL_GetTick();
 
-    while (s_current_floor < target_floor) {
-        int32_t start_pulse = floorEncoderGetPulseCount();
-        uint32_t start_tick = HAL_GetTick();
-
+    if (target_floor > s_current_floor) {
         s_state = STATE_MOVING_UP;
         motorUp();
-        while ((start_pulse - floorEncoderGetPulseCount()) < (int32_t)FLOOR_15CM_PULSE) {
-            if ((HAL_GetTick() - start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
-                motorStop();
-                s_state = STATE_ERROR;
-                return false;
-            }
-        }
-        motorStop();
-
-        s_current_floor++;
-    }
-
-    while (s_current_floor > target_floor) {
-        int32_t start_pulse = floorEncoderGetPulseCount();
-        uint32_t start_tick = HAL_GetTick();
-
+    } else {
         s_state = STATE_MOVING_DOWN;
         motorDown();
-        while ((floorEncoderGetPulseCount() - start_pulse) < (int32_t)FLOOR_15CM_PULSE) {
-            if ((HAL_GetTick() - start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
-                motorStop();
-                s_state = STATE_ERROR;
-                return false;
-            }
-        }
-        motorStop();
-
-        s_current_floor--;
     }
 
-    s_state = STATE_ARRIVED;
-    return true;
+     elevatorControllerUpdateDisplay();
+}
+
+/*
+ * 층 이동/도착/에러 처리 등 엘리베이터 상태 관리
+ * 논블로킹 상태 머신. appRun()에서 매 tick마다 호출된다.
+ */
+void elevatorControllerUpdate(void){
+    doorUpdate();
+
+    switch (s_state) {
+    case STATE_IDLE:
+        if (!schedulerHasPendingRequests()) {
+            break;
+        }
+
+        s_target_floor = schedulerGetNextTarget(s_current_floor);
+        printf("IDLE: 목표층t=%u (현재=%u)\r\n", s_target_floor, s_current_floor);
+        elevatorControllerLightFloorLed(s_target_floor);
+
+        if (s_target_floor == s_current_floor) {
+            s_state = STATE_ARRIVED; /* 이미 그 층이면 이동 없이 바로 도착 처리 */
+        } else {
+            elevatorControllerStartStep(s_target_floor);
+        }
+        break;
+
+    case STATE_MOVING_UP:
+        {
+            int32_t pulse = floorEncoderGetPulseCount();                // pulse
+            int32_t raw_delta = pulse - s_step_start_pulse;         
+            int32_t delta = (raw_delta < 0) ? -raw_delta : raw_delta;   // 이번 스텝에서 이동량
+            static uint32_t s_debug_tick = 0;
+
+            if (delta >= (int32_t)FLOOR_15CM_PULSE) {
+                motorStop();
+                s_current_floor++;
+
+                if (s_current_floor == s_target_floor) {
+                    s_state = STATE_ARRIVED;
+                    elevatorControllerUpdateDisplay();
+                } else {
+                    elevatorControllerStartStep(s_target_floor);
+                }
+            } else if ((HAL_GetTick() - s_step_start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
+                motorStop();
+                s_state = STATE_ERROR;
+            } else if ((HAL_GetTick() - s_debug_tick) > 300U) {
+                /* TODO(임시 디버그): 펄스가 실제로 움직이는지 확인용. 원인 파악되면 지울 것 */
+                s_debug_tick = HAL_GetTick();
+                printf("MOVING_UP debug: pulse=%ld delta=%ld / target=%u\r\n", (long)pulse, (long)delta, (unsigned)FLOOR_15CM_PULSE);
+            }
+        }
+        break;
+
+    case STATE_MOVING_DOWN:
+        {
+            int32_t pulse = floorEncoderGetPulseCount();
+            int32_t raw_delta = pulse - s_step_start_pulse;
+            int32_t delta = (raw_delta < 0) ? -raw_delta : raw_delta;
+            static uint32_t s_debug_tick = 0;
+
+            if (delta >= (int32_t)FLOOR_15CM_PULSE) {
+                motorStop();
+                s_current_floor--;
+
+                if (s_current_floor == s_target_floor) {
+                    s_state = STATE_ARRIVED;
+                     elevatorControllerUpdateDisplay();
+                } else {
+                    elevatorControllerStartStep(s_target_floor);
+                }
+            } else if ((HAL_GetTick() - s_step_start_tick) > MOTOR_MOVE_TIMEOUT_MS) {
+                motorStop();
+                s_state = STATE_ERROR;
+            } else if ((HAL_GetTick() - s_debug_tick) > 300U) {
+                /* TODO(임시 디버그): 펄스가 실제로 움직이는지 확인용. 원인 파악되면 지울 것 */
+                s_debug_tick = HAL_GetTick();
+                printf("MOVING_DOWN debug: pulse=%ld delta=%ld / target=%u\r\n", (long)pulse, (long)delta, (unsigned)FLOOR_15CM_PULSE);
+            }
+        }
+        break;
+
+    case STATE_ARRIVED:
+        elevatorControllerClearFloorLed(s_target_floor); /* 도착한 층의 호출 LED를 끈다 */
+        buzzerPlayFloorTone(s_target_floor);
+        printf("arrived at floor %u\r\n", s_current_floor);
+
+        schedulerClearRequest(s_target_floor);
+        doorOpen();
+        s_dwell_start_tick = HAL_GetTick();
+        s_state = STATE_DWELL;
+
+         elevatorControllerUpdateDisplay();
+        break;
+
+    case STATE_DWELL:
+        /* 도어가 완전히 닫히고, 도착 후 대기시간(ARRIVAL_DWELL_MS)도 지나야 다음 목표로 넘어간다 */
+        if ((doorGetState() == DOOR_CLOSED) && ((HAL_GetTick() - s_dwell_start_tick) >= ARRIVAL_DWELL_MS)) {
+            s_state = STATE_IDLE;
+        }
+        break;
+
+    case STATE_ERROR:
+        printf("MOVE TIMEOUT! stuck near floor %u (target %u)\r\n", s_current_floor, s_target_floor);
+        schedulerClearRequest(s_target_floor); 
+        s_state = STATE_IDLE;
+        break;
+
+    default:
+        s_state = STATE_IDLE;
+        break;
+    }
+}
+ void elevatorControllerUpdateDisplay(void)
+{
+    drawElevatorScreen(
+        s_current_floor,
+        s_state
+    );
 }

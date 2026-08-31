@@ -6,11 +6,14 @@
 #include "floorSensor.h"
 #include "floorEncoder.h"
 #include "elevatorController.h"
+#include "door.h"
 #include "main.h"
 #include "stm32f4xx_hal_gpio.h"
 #include "usart.h"
 #include <stdio.h>
+#include "display.h"
 
+// Teleplot 통신용
 int __io_putchar(int ch){
     HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
     return ch;
@@ -20,69 +23,52 @@ void appInit(void){
     buttonInit();
     schedulerInit();
     elevatorControllerInit();
+    ssd1306Init();
+
+    
 }
 
 /*
- * BTN_1=1층, BTN_2=2층, BTN_3=3층 호출 버튼을 읽어 목표 층으로 이동.
- * buttonScan()은 디바운싱된 눌림을 schedulerAddRequest()로 기록해둔다(나중의 큐 처리를 위함).
+ * 버튼(BTN_1/2/3)과 홀센서 버튼(BTN_HALL_1/2/3) 모두 같은 요청 큐에 등록된다.
  */
 void appRun(void){
     buttonScan();
+    elevatorControllerUpdate();
+    // appTestDisplay();
 
-    uint8_t target_floor = 0;
-
-    if (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET) {
-        target_floor = 1;
-    } else if (HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET) {
-        target_floor = 2;
-    } else if (HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-        target_floor = 3;
-    }
-
-    if (target_floor == 0) {
-        return;
-    }
-
-    elevatorControllerMoveToFloor(target_floor);
-    printf("arrived at floor %u\r\n", elevatorControllerGetFloor());
-
-    /* 버튼 뗄 때까지 대기 (중복 트리거 방지) */
-    while (HAL_GPIO_ReadPin(BTN_1_GPIO_Port, BTN_1_Pin) == GPIO_PIN_RESET || HAL_GPIO_ReadPin(BTN_2_GPIO_Port, BTN_2_Pin) == GPIO_PIN_RESET 
-        || HAL_GPIO_ReadPin(BTN_3_GPIO_Port, BTN_3_Pin) == GPIO_PIN_RESET) {
-    }
+  //  drawElevatorScreen(2, STATE_MOVING_DOWN);
 }
 
 /*
- * 모터 배선/방향이 맞는지 확인하기 위한 수동 테스트.
- * elevatorController/스케줄러 없이 motor.c의 API만 직접 호출해서 상승 -> 정지 -> 하강 -> 정지를 실행
+ * 서보 도어 배선/각도 확인용 수동 테스트. 0 -> 180 -> 0도 순으로 움직여본다.
  */
-void appTestMotor(void)
+void appTestDoor(void)
 {
-    motorInit();
+    doorInit();
 
-    // motoDown();
-    // HAL_Delay(1000);
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
 
-    // motorStop();
-    // HAL_Delay(500);
+    doorSetServoAngle(180);
+    HAL_Delay(1000);
 
-     motorDown();
-     HAL_Delay(1000);
+    doorSetServoAngle(0);
+    HAL_Delay(1000);
+} 
+// void appTestDisplay(void){
+   
+//     // 디스플레이 초기화 확인
+//     if (!ssd1306Init()) {
+//         // 초기화 실패 시 처리 (필요한 경우 에러 LED 점등 등)
+//         return;
+//     }
 
-    motorStop();
-}
-
-
-/*
- * 모터 축 엔코더 배선 확인용 수동 테스트.
- */
-void appTestFloorEncoder(void)
-{
-    floorEncoderInit();
-
-    while (1) {
-        printf("=====pulse: %ld\r\n", (long)floorEncoderGetPulseCount());
-        HAL_Delay(300);
-    }
-}
- 
+//     // --- 3층 정지 화면 호출 ---
+//     int currentFloor = 3;
+//     drawElevatorScreen(currentFloor, ELEVATOR_IDLE);
+    
+//     // 화면이 꺼지지 않도록 유지 (테스트용)
+//     while (1) {
+//         // 필요에 따라 층수나 상태를 변경하는 로직 추가 가능
+//     }
+// }
