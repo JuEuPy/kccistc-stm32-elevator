@@ -4,6 +4,26 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 
 ---
 
+
+## Tech Stack
+
+### Hardware & MCU
+- **MCU / Board:** STMicroelectronics STM32 (Nucleo Board)
+- **Actuator & Driver:** 130 DC Motor, H-Bridge Motor Driver
+- **Sensors & Input/Output:** Quadrature Rotary Encoder, Push Buttons, Status LEDs, Passive Buzzer
+
+### Firmware & Software
+- **Language:** C (C99)
+- **Framework & Libraries:** STM32 HAL Driver, CMSIS
+- **Development Tools:** STM32CubeIDE, STM32CubeMX
+- **Architecture & Patterns:** 
+  - Non-blocking Tick-based Task Scheduling
+  - Circular FIFO Queue (Elevator Floor Scheduling)
+  - Finite State Machine (FSM)
+  - Hardware Quadrature Decoding (Timer Encoder Mode)
+ 
+---
+
 # 핀 배치 (Pinout)
 
 하드웨어가 확정되는 대로 이 표를 갱신하고, `App/Inc/config.h`의 정의도 함께 수정합니다.
