@@ -146,3 +146,12 @@ kccistc-stm32-elevator/
 | Floor Encoder | `floorEncoder.c/h` | 모터축 엔코더 누적 펄스 수로 현재 층 판단 |
 | Elevator Controller | `elevatorController.c/h` | IDLE / MOVING_UP / MOVING_DOWN / ARRIVED / ERROR 상태 전이를 관리하며 Scheduler/Motor/Floor 센서를 조합해 순차 제어 |
 | App Main | 각 모듈 초기화 및 메인 루프(폴링) 구성, `main.c`에서 호출 |
+
+## 팀 구성원
+
+| 이름 | GitHub | 담당 업무 |
+|---|---|---|
+| 전은표 | [@JuEuPy](https://github.com/JuEuPy) | 프로젝트 팀장 |
+| 노현주 | [@WhatTheHJ](https://github.com/WhatTheHJ) | 깃코드 총책임 |
+| 유  현 | [@yhsys0429-create](https://github.com/yhsys0429-create) | STM보드 및 회로 |
+| 한상범 | [@DeInk](https://github.com/DeInK) | 모델 제작 및 OLED 코드 |
