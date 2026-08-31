@@ -29,7 +29,7 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 |:---|:---|:---|:---|:---|
 | IN3 (정회전) | PB0 | A3 | GPIO_Output | High/Low 방향 제어 |
 | IN4 (역회전) | PB1 | CN10 (Pin 24) | GPIO_Output | High/Low 방향 제어 |
-| ENA (속도 PWM) | PB8 | D15 | TIM4_CH3 (PWM) | 1kHz 속도 제어 |
+| ENB (속도 PWM) | PB8 | D15 | TIM4_CH3 (PWM) | 1kHz 속도 제어 |
 | A상 | PC6 | CN10(Pin 4) | TIM3_CH1 (Encoder Mode) | 방향 판별 |
 | B상 | PC7 | D9 | TIM3_CH2 (Encoder Mode) | 방향 판별 |
 
@@ -61,7 +61,7 @@ STM32 기반 3층 엘리베이터 제어 시스템 프로젝트입니다.
 | 타이머 | 제어 대상 | 목표 주파수 | Prescaler (PSC) | Counter Period (ARR) | 출력 핀 |
 |:---|:---|:---|:---|:---|:---|
 | **TIM4** | DC 모터 속도 | 1kHz | `100 - 1` (99) | `1000 - 1` (999) | PB8 (CH3) |
-| **TIM2** | 서보 모터 각도 | 50Hz | `1000 - 1` (999) | `2000 - 1` (1999) | PB3 (CH2) |
+| **TIM1** | 서보 모터 각도 | 50Hz | `1000 - 1` (999) | `2000 - 1` (1999) | PA11 (CH4) |
 
 ---
 
